@@ -14,10 +14,10 @@ export async function POST(req: NextRequest) {
 
         // 1. Scrape the HTML via the external Cloud Run Worker
         console.log(`Scraping URL via Cloud Run Worker: ${url}`);
-        const workerResponse = await fetch('https://ktimatos-scraper-807900232533.europe-west1.run.app/scrape', {
+        const workerResponse = await fetch('https://ktimatos-scraper-1053889475362.europe-west1.run.app/scrape', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ url: url, secret: 'NODEX2025' })
+            body: JSON.stringify({ url: url, secret: 'KT_a8Fj2LpXmZn4vQ1sC7' })
         });
 
         if (!workerResponse.ok) {
