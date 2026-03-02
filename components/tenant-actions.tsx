@@ -5,7 +5,6 @@ import { setupTenantAction, sendTenantInviteAction } from "@/app/admin/actions"
 import { enableImpersonationAction } from '@/lib/impersonation'
 import { toast } from "sonner"
 import { Loader2, KeyRound, Mail, ExternalLink, VenetianMask } from "lucide-react"
-import { isRedirectError } from "next/navigation"
 import { useState } from "react"
 import {
     DropdownMenu,
@@ -25,8 +24,8 @@ export function TenantActions({ orgId, email }: { orgId: string, email?: string 
         try {
             await enableImpersonationAction(orgId)
             // The action will automatically redirect to /dashboard
-        } catch (err) {
-            if (isRedirectError(err)) throw err;
+        } catch (err: any) {
+            if (err?.digest?.startsWith('NEXT_REDIRECT') || err?.message === 'NEXT_REDIRECT') throw err;
             console.error(err)
             toast.error("Failed to assume identity. Check logs.")
             setLoadingImpersonate(false) // Only stop loading if error, redirect handles success
