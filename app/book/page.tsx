@@ -21,10 +21,12 @@ function BookContent() {
             <div className="max-w-4xl mx-auto w-full px-6 flex-1">
 
                 <header className="mb-8 text-center">
-                    <Link href="/">
-                        <h1 className="text-3xl font-extrabold text-white tracking-tight mb-3 hover:opacity-80 transition-opacity inline-block cursor-pointer">
-                            Ktimat<span className="text-yellow-500">OS</span>
-                        </h1>
+                    <Link href="/" className="inline-block group">
+                        <img
+                            src="/logotipo.png"
+                            alt="KtimatOS Logo"
+                            className="h-11 w-auto group-hover:opacity-80 transition-opacity mx-auto"
+                        />
                     </Link>
                     <p className="text-gray-400 mt-2 text-[15px]">
                         Please select a time manually below.
