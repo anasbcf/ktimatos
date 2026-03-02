@@ -167,11 +167,14 @@ export function PropertyForm({ agents = [], initialData, initialStatus, initialA
         setSaveProgress("Securing property images...");
 
         try {
-            // Phase 3b: Immutable Image Ingestion Pipeline
-            // Download external images and upload to our Supabase Storage to prevent Hotlinking issues
-            const uploadPromises = formData.images_urls.map(async (url) => {
-                if (url.includes("supabase.co") || url.includes("ktimatos.com/storage")) {
-                    return url; // Already secure
+            // Phase 3b: Immutable Image Ingestion Pipeline (Hero Image Only)
+            // We only download and secure the FIRST image (cover photo) to save 95% on Supabase Storage costs.
+            // This guarantees we have 1 clean, unblocked image to send via the WhatsApp API.
+            // All other images (gallery) remain as external Bazaraki links.
+            const uploadPromises = formData.images_urls.map(async (url, index) => {
+                // If it's already a ktimatos supabase url, or it's NOT the first image, keep original
+                if (index > 0 || url.includes("supabase.co") || url.includes("ktimatos.com/storage")) {
+                    return url;
                 }
 
                 try {
@@ -185,7 +188,7 @@ export function PropertyForm({ agents = [], initialData, initialStatus, initialA
                         return data.url;
                     }
                 } catch (err) {
-                    console.error("Image upload failed for", url, err);
+                    console.error("Hero image upload failed for", url, err);
                 }
                 return url; // Fallback to original URL
             });
