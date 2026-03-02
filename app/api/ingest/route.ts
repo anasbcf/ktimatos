@@ -6,10 +6,15 @@ import { createClient } from '@/lib/supabase/server';
 
 export async function POST(req: NextRequest) {
     try {
-        const { url, org_id } = await req.json();
+        let { url, org_id } = await req.json();
 
         if (!url) {
             return NextResponse.json({ error: 'URL is required' }, { status: 400 });
+        }
+
+        // Automatic protocol injection for user-pasted invalid links
+        if (!url.startsWith('http://') && !url.startsWith('https://')) {
+            url = 'https://' + url;
         }
 
         // 1. Scrape the HTML via the external Cloud Run Worker
