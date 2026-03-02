@@ -1,6 +1,7 @@
 
 import OpenAI from "openai";
 import { z } from "zod";
+import * as cheerio from "cheerio";
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
@@ -28,6 +29,8 @@ const PropertySchema = z.object({
 
     // Location
     location_area: z.string().describe("The location or area of the property, e.g., 'Limassol - Marina'."),
+    city: z.string().nullable().describe("The primary city (e.g., 'Limassol', 'Paphos', 'Nicosia')."),
+    district_area: z.string().nullable().describe("The specific district or neighborhood (e.g., 'Germasogeia', 'Agios Tychonas')."),
     distance_to_sea_meters: z.number().nullable().describe("Distance to the sea in meters, if specified."),
     sea_view: z.boolean().nullable().describe("Explicit boolean if the property has a sea view."),
     views: z.array(z.string()).describe("Other views mentioned (e.g., 'Mountains', 'City', 'Pool')."),
@@ -64,15 +67,41 @@ const PropertySchema = z.object({
     description_short: z.string().describe("A short summary description of the property."),
     internal_notes: z.string().nullable().describe("Any hidden or agent-specific notes found (optional)."),
     images_urls: z.array(z.string()).describe("A list of high quality property image URLs. Ignore logos/icons."),
+
+    // System Quality (Phase 3)
+    verification_status: z.enum(['draft', 'verified']).describe("Always set this to 'draft' for newly scraped properties."),
+    ai_confidence_score: z.number().describe("Scale 0-100 indicating how confident you are in the accuracy of this extraction based on the provided text clarity."),
 });
 
 export type PropertyData = z.infer<typeof PropertySchema>;
 
 export async function extractPropertyData(htmlContent: string): Promise<PropertyData | null> {
     try {
+        // --- PHASE 1: DETERMINISTIC DOM PARSING (CHEERIO) ---
+        // 1. Load HTML
+        const $ = cheerio.load(htmlContent);
+
+        // 2. Extract Image Arrays deterministically to bypass LLM hallucination
+        const extractedImages: Set<string> = new Set();
+        $('img').each((i, el) => {
+            const src = $(el).attr('src') || $(el).attr('data-src');
+            // Filter out tiny icons, logos, or tracking pixels
+            if (src && src.startsWith('http') && !src.includes('logo') && !src.includes('icon') && !src.includes('avatar')) {
+                extractedImages.add(src);
+            }
+        });
+        // Sometimes Bazaraki uses a specific class or data attribute for gallery images
+        const galleryImages = Array.from(extractedImages).slice(0, 25); // Cap at 25 images
+
+        // 3. Clean the HTML out: Strip scripts, styles, navs to create a pure text blob
+        $('script, style, nav, footer, iframe, noscript, svg').remove();
+        const pureText = $('body').text().replace(/\s+/g, ' ').trim();
+        const textSlice = pureText.substring(0, 30000); // 30k chars is plenty for property text, saving massive tokens
+
+        // --- PHASE 2: SEMANTIC EXTRACTION (LLM) ---
         const jsonSchema = JSON.stringify({
             property_use: "Sale | Rent | Investment | Unknown",
-            property_type: "Apartment | Studio | Penthouse | House | Villa | Townhouse | Plot | Commercial | Office | Other",
+            property_type: "Apartment | Studio | Penthouse | ...",
             condition: "New | Resale | Under Construction | Unknown",
             price_value: "number",
             currency: "string (EUR)",
@@ -85,6 +114,8 @@ export async function extractPropertyData(htmlContent: string): Promise<Property
             rent_upfront_months: "number | null",
             minimum_lease_months: "number | null",
             location_area: "string",
+            city: "string | null",
+            district_area: "string | null",
             distance_to_sea_meters: "number | null",
             sea_view: "boolean | null",
             views: ["string"],
@@ -108,7 +139,9 @@ export async function extractPropertyData(htmlContent: string): Promise<Property
             amenities: ["string"],
             description_short: "string",
             internal_notes: "string | null",
-            images_urls: ["string (url)"]
+            images_urls: ["string (url)"],
+            verification_status: "draft",
+            ai_confidence_score: "number (0-100)"
         });
 
         const completion = await openai.chat.completions.create({
@@ -117,25 +150,27 @@ export async function extractPropertyData(htmlContent: string): Promise<Property
                 {
                     role: "system",
                     content: `You are an expert real estate data extractor for the Cyprus market (expert in parsing DOM.com.cy and Bazaraki). 
-          Your task is to analyze the provided HTML of a property listing and extract key information into a structured JSON string.
+          Your task is to analyze the provided raw text of a scraped property listing and extract key information into a structured JSON string.
           
           Strictly follow this JSON structure:
           ${jsonSchema}
 
-          Crucial Cyprus Market Instructions:
+          Crucial Extraction Rules:
+          - Geography: Always split the location into 'city' (e.g. Limassol) and 'district_area' (e.g. Germasogeia).
           - Cyprus VAT: Pay close attention to VAT (IVA). New builds often have "+ VAT". If it's a resale, VAT is usually not applicable.
           - Title Deeds (Kotzani): Watch out for terms like "Title deeds available", "Share of land", "Final approval pending". Very important.
           - Pets: If it is a rental, check if pets are allowed.
-          - Deposits/Rentals: Look for "2 deposits", "1 rent upfront", "common expenses included".
-          - Images: Look for <img src="..."> or background-images that look like property photos. Grab as many high-res photos as possible.
+          - Deposits: Look for "2 deposits", "1 rent upfront".
           - If a field is not found or unclear, use null.
-          The input is raw HTML.
+          - Set verification_status strictly to 'draft'.
+          - Provide an ai_confidence_score (0-100) reflecting how sure you are of the overall extraction accuracy based on the text.
+          
+          You will receive clean text from the website, not HTML.
           Return ONLY valid JSON matching the exact schema keys.`,
-
                 },
                 {
                     role: "user",
-                    content: htmlContent.substring(0, 100000),
+                    content: `Here is the clean text scraped from the page:\n\n${textSlice}\n\nHere are the images we found via Cheerio, merge them into 'images_urls': ${JSON.stringify(galleryImages)}`,
                 },
             ],
             response_format: { type: "json_object" },
@@ -145,7 +180,13 @@ export async function extractPropertyData(htmlContent: string): Promise<Property
         if (!content) return null;
 
         const result = JSON.parse(content);
-        return result as PropertyData; // Basic casting, could add Zod validation here if strictness needed
+
+        // Ensure images from Cheerio Phase 1 are respected if LLM missed them
+        if (!result.images_urls || result.images_urls.length === 0) {
+            result.images_urls = galleryImages;
+        }
+
+        return result as PropertyData;
     } catch (error) {
         console.error("OpenAI Extraction Error:", error);
         return null;

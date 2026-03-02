@@ -40,6 +40,8 @@ const DEFAULT_DATA: PropertyData = {
     rent_upfront_months: null,
     minimum_lease_months: null,
     location_area: "",
+    city: null,
+    district_area: null,
     distance_to_sea_meters: null,
     sea_view: false,
     views: [],
@@ -69,6 +71,8 @@ const DEFAULT_DATA: PropertyData = {
     description_short: "",
     internal_notes: "",
     images_urls: [],
+    verification_status: "draft",
+    ai_confidence_score: 0,
 };
 
 export function PropertyForm({ agents = [], initialData, initialStatus, initialAssignedAgents, onSubmit }: PropertyFormProps) {
@@ -81,6 +85,10 @@ export function PropertyForm({ agents = [], initialData, initialStatus, initialA
     });
     const [assignedAgentIds, setAssignedAgentIds] = useState<string[]>(initialAssignedAgents || []);
     const [status, setStatus] = useState<string>(initialStatus || "Available");
+
+    // Saving and Upload States
+    const [isSaving, setIsSaving] = useState(false);
+    const [saveProgress, setSaveProgress] = useState("");
 
     // Simple state handler for string/number fields
     const handleChange = (field: keyof PropertyData, value: any) => {
@@ -152,10 +160,55 @@ export function PropertyForm({ agents = [], initialData, initialStatus, initialA
         );
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (onSubmit) {
-            onSubmit(formData, assignedAgentIds, status);
+
+        setIsSaving(true);
+        setSaveProgress("Securing property images...");
+
+        try {
+            // Phase 3b: Immutable Image Ingestion Pipeline
+            // Download external images and upload to our Supabase Storage to prevent Hotlinking issues
+            const uploadPromises = formData.images_urls.map(async (url) => {
+                if (url.includes("supabase.co") || url.includes("ktimatos.com/storage")) {
+                    return url; // Already secure
+                }
+
+                try {
+                    const res = await fetch("/api/images/upload-external", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ imageUrl: url })
+                    });
+                    const data = await res.json();
+                    if (data.success && data.url) {
+                        return data.url;
+                    }
+                } catch (err) {
+                    console.error("Image upload failed for", url, err);
+                }
+                return url; // Fallback to original URL
+            });
+
+            const secureImageUrls = await Promise.all(uploadPromises);
+
+            const finalData = {
+                ...formData,
+                images_urls: secureImageUrls
+            };
+
+            setSaveProgress("Saving property...");
+
+            if (onSubmit) {
+                // If the parent onSubmit is async, wait for it
+                await onSubmit(finalData, assignedAgentIds, status);
+            }
+        } catch (error) {
+            console.error("Save Error:", error);
+            toast.error("An error occurred while saving.");
+        } finally {
+            setIsSaving(false);
+            setSaveProgress("");
         }
     };
 
@@ -208,6 +261,16 @@ export function PropertyForm({ agents = [], initialData, initialStatus, initialA
                             <CardTitle>Basic Details</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
+                            {formData.ai_confidence_score > 0 && (
+                                <div className={`p-3 rounded-md mb-4 border flex items-center gap-2 font-medium ${formData.ai_confidence_score >= 80 ? 'bg-green-50 text-green-700 border-green-200' :
+                                    formData.ai_confidence_score >= 50 ? 'bg-amber-50 text-amber-700 border-amber-200' :
+                                        'bg-red-50 text-red-700 border-red-200'
+                                    }`}>
+                                    <Wand2 className="w-4 h-4" />
+                                    AI Confidence Score: {formData.ai_confidence_score}%
+                                </div>
+                            )}
+
                             <div className="space-y-2 mb-4 p-4 border rounded-md bg-slate-50 border-slate-200">
                                 <Label className="text-slate-700">Lifecycle Status</Label>
                                 <Select
@@ -285,15 +348,34 @@ export function PropertyForm({ agents = [], initialData, initialStatus, initialA
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-4 gap-4">
-                                <div className="col-span-2 space-y-2">
-                                    <Label>Location Area</Label>
+                            <div className="grid grid-cols-12 gap-4">
+                                <div className="col-span-4 space-y-2">
+                                    <Label>City</Label>
+                                    <Input
+                                        value={formData.city || ""}
+                                        onChange={(e) => handleChange("city", e.target.value)}
+                                        placeholder="e.g. Limassol"
+                                    />
+                                </div>
+                                <div className="col-span-4 space-y-2">
+                                    <Label>District / Neighborhood</Label>
+                                    <Input
+                                        value={formData.district_area || ""}
+                                        onChange={(e) => handleChange("district_area", e.target.value)}
+                                        placeholder="e.g. Germasogeia"
+                                    />
+                                </div>
+                                <div className="col-span-4 space-y-2">
+                                    <Label>Raw Location Area</Label>
                                     <Input
                                         value={formData.location_area || ""}
                                         onChange={(e) => handleChange("location_area", e.target.value)}
-                                        placeholder="e.g. Limassol - Marina"
+                                        placeholder="Full address string"
                                     />
                                 </div>
+                            </div>
+
+                            <div className="grid grid-cols-4 gap-4">
                                 <div className="space-y-2">
                                     <Label>Dist. to Sea (m)</Label>
                                     <Input
@@ -622,8 +704,16 @@ export function PropertyForm({ agents = [], initialData, initialStatus, initialA
             </div>
 
             <div className="flex justify-end gap-4 mt-8 pt-4 border-t">
-                <Button variant="outline" type="button">Cancel</Button>
-                <Button type="submit" size="lg" className="min-w-[150px]">Save Property</Button>
+                <Button variant="outline" type="button" disabled={isSaving}>Cancel</Button>
+                <Button type="submit" size="lg" className="min-w-[150px]" disabled={isSaving}>
+                    {isSaving ? (
+                        <span className="flex items-center gap-2">
+                            <Loader2 className="w-4 h-4 animate-spin" /> {saveProgress}
+                        </span>
+                    ) : (
+                        "Save Property"
+                    )}
+                </Button>
             </div>
         </form>
     );
