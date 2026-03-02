@@ -12,6 +12,9 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'URL is required' }, { status: 400 });
         }
 
+        // Clean any leading/trailing whitespace
+        url = url.trim();
+
         // Automatic protocol injection for user-pasted invalid links
         if (!url.startsWith('http://') && !url.startsWith('https://')) {
             url = 'https://' + url;
