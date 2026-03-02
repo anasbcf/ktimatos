@@ -32,22 +32,39 @@ const DEFAULT_DATA: PropertyData = {
     price_value: 0,
     currency: "EUR",
     vat_applicable: false,
+    price_includes_vat: false,
     vat_type: null,
+    communal_fees: null,
+    communal_fees_included: null,
+    deposit_months: null,
+    rent_upfront_months: null,
+    minimum_lease_months: null,
     location_area: "",
-    distance_to_sea_m: null,
+    distance_to_sea_meters: null,
+    sea_view: false,
     views: [],
     lat: null,
     lng: null,
     year_of_construction: null,
+    floor_number: null,
+    total_building_floors: null,
     bedrooms: null,
     bathrooms: null,
     covered_area_sqm: null,
-    plot_size_sqm: null,
-    title_deeds: false,
-    furnishing: "Unknown",
+    covered_verandas_sqm: null,
+    uncovered_verandas_sqm: null,
+    plot_sqm: null,
+    title_deeds_status: null,
+    energy_efficiency_rating: null,
+    furnishing_status: "Unknown",
     heating: null,
     air_conditioning: null,
     pool: null,
+    parking_spaces: null,
+    parking_type: null,
+    storage_room: null,
+    elevator: null,
+    pet_friendly: null,
     amenities: [],
     description_short: "",
     internal_notes: "",
@@ -268,7 +285,7 @@ export function PropertyForm({ agents = [], initialData, initialStatus, initialA
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-3 gap-4">
+                            <div className="grid grid-cols-4 gap-4">
                                 <div className="col-span-2 space-y-2">
                                     <Label>Location Area</Label>
                                     <Input
@@ -278,13 +295,23 @@ export function PropertyForm({ agents = [], initialData, initialStatus, initialA
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Distance to Sea (m)</Label>
+                                    <Label>Dist. to Sea (m)</Label>
                                     <Input
                                         type="number"
-                                        value={formData.distance_to_sea_m || ""}
-                                        onChange={(e) => handleChange("distance_to_sea_m", parseInt(e.target.value) || null)}
+                                        value={formData.distance_to_sea_meters || ""}
+                                        onChange={(e) => handleChange("distance_to_sea_meters", parseInt(e.target.value) || null)}
                                         placeholder="e.g. 500"
                                     />
+                                </div>
+                                <div className="space-y-2 flex items-center pt-8">
+                                    <input
+                                        type="checkbox"
+                                        id="sea-view-check"
+                                        checked={formData.sea_view || false}
+                                        onChange={(e) => handleChange("sea_view", e.target.checked)}
+                                        className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-600 mr-2"
+                                    />
+                                    <Label htmlFor="sea-view-check">Sea View</Label>
                                 </div>
                             </div>
 
@@ -314,7 +341,7 @@ export function PropertyForm({ agents = [], initialData, initialStatus, initialA
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Area (m²)</Label>
+                                    <Label>Internal (m²)</Label>
                                     <Input
                                         type="number"
                                         value={formData.covered_area_sqm || ""}
@@ -323,12 +350,40 @@ export function PropertyForm({ agents = [], initialData, initialStatus, initialA
                                 </div>
                             </div>
 
+                            <div className="grid grid-cols-3 gap-4">
+                                <div className="space-y-2">
+                                    <Label>Plot / Land (m²)</Label>
+                                    <Input
+                                        type="number"
+                                        value={formData.plot_sqm || ""}
+                                        onChange={(e) => handleChange("plot_sqm", parseInt(e.target.value) || null)}
+                                        placeholder="For Villas/Houses"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>Cov. Verandas</Label>
+                                    <Input
+                                        type="number"
+                                        value={formData.covered_verandas_sqm || ""}
+                                        onChange={(e) => handleChange("covered_verandas_sqm", parseInt(e.target.value) || null)}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>Unc. Verandas</Label>
+                                    <Input
+                                        type="number"
+                                        value={formData.uncovered_verandas_sqm || ""}
+                                        onChange={(e) => handleChange("uncovered_verandas_sqm", parseInt(e.target.value) || null)}
+                                    />
+                                </div>
+                            </div>
+
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <Label>Furnishing</Label>
                                     <Select
-                                        value={formData.furnishing}
-                                        onValueChange={(val) => handleChange("furnishing", val)}
+                                        value={formData.furnishing_status || "Unknown"}
+                                        onValueChange={(val) => handleChange("furnishing_status", val)}
                                     >
                                         <SelectTrigger>
                                             <SelectValue placeholder="Furnishing status" />
@@ -337,6 +392,7 @@ export function PropertyForm({ agents = [], initialData, initialStatus, initialA
                                             <SelectItem value="Fully Furnished">Fully Furnished</SelectItem>
                                             <SelectItem value="Semi-Furnished">Semi-Furnished</SelectItem>
                                             <SelectItem value="Unfurnished">Unfurnished</SelectItem>
+                                            <SelectItem value="Appliances Only">Appliances Only</SelectItem>
                                             <SelectItem value="Unknown">Unknown</SelectItem>
                                         </SelectContent>
                                     </Select>
@@ -430,21 +486,69 @@ export function PropertyForm({ agents = [], initialData, initialStatus, initialA
                             </div>
 
                             {formData.vat_applicable && (
-                                <div className="space-y-2 pl-6 border-l-2 border-green-200">
-                                    <Label>VAT Type</Label>
-                                    <Select
-                                        value={formData.vat_type || ""}
-                                        onValueChange={(val) => handleChange("vat_type", val)}
-                                    >
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select VAT rate" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="19%">19% (Standard)</SelectItem>
-                                            <SelectItem value="5%">5% (First Home)</SelectItem>
-                                            <SelectItem value="0%">0%</SelectItem>
-                                        </SelectContent>
-                                    </Select>
+                                <div className="grid grid-cols-2 gap-2 pl-6 border-l-2 border-green-200">
+                                    <div className="space-y-2">
+                                        <Label>VAT Rate</Label>
+                                        <Select
+                                            value={formData.vat_type || ""}
+                                            onValueChange={(val) => handleChange("vat_type", val)}
+                                        >
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Rate" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="19%">19% (Standard)</SelectItem>
+                                                <SelectItem value="5%">5% (First Home)</SelectItem>
+                                                <SelectItem value="0%">0%</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    <div className="space-y-2 flex flex-col justify-end pb-2">
+                                        <div className="flex items-center gap-2">
+                                            <input
+                                                type="checkbox"
+                                                id="price-includes-vat"
+                                                checked={formData.price_includes_vat || false}
+                                                onChange={(e) => handleChange("price_includes_vat", e.target.checked)}
+                                                className="h-4 w-4 rounded border-slate-300 text-green-600 focus:ring-green-600"
+                                            />
+                                            <Label htmlFor="price-includes-vat" className="text-xs">Price is VAT inc.</Label>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {formData.property_use === "Rent" && (
+                                <div className="pt-4 border-t border-green-100 space-y-4">
+                                    <Label className="font-bold text-green-800">Rental Terms</Label>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <Label>Deposits (Months)</Label>
+                                            <Input
+                                                type="number"
+                                                value={formData.deposit_months || ""}
+                                                onChange={(e) => handleChange("deposit_months", parseInt(e.target.value) || null)}
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>Upfront (Months)</Label>
+                                            <Input
+                                                type="number"
+                                                value={formData.rent_upfront_months || ""}
+                                                onChange={(e) => handleChange("rent_upfront_months", parseInt(e.target.value) || null)}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <input
+                                            type="checkbox"
+                                            id="pet-friendly-check"
+                                            checked={formData.pet_friendly || false}
+                                            onChange={(e) => handleChange("pet_friendly", e.target.checked)}
+                                            className="h-4 w-4 rounded border-slate-300 text-green-600 focus:ring-green-600"
+                                        />
+                                        <Label htmlFor="pet-friendly-check" className="font-medium">Pet Friendly</Label>
+                                    </div>
                                 </div>
                             )}
 
@@ -495,15 +599,22 @@ export function PropertyForm({ agents = [], initialData, initialStatus, initialA
                                 )}
                             </div>
 
-                            <div className="flex items-center gap-2 pt-2">
-                                <input
-                                    type="checkbox"
-                                    id="title-deeds"
-                                    checked={formData.title_deeds || false}
-                                    onChange={(e) => handleChange("title_deeds", e.target.checked)}
-                                    className="h-4 w-4 rounded border-slate-300"
-                                />
-                                <Label htmlFor="title-deeds">Title Deeds Target</Label>
+                            <div className="space-y-2">
+                                <Label>Title Deeds Status</Label>
+                                <Select
+                                    value={formData.title_deeds_status || ""}
+                                    onValueChange={(val) => handleChange("title_deeds_status", val)}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select Kotzani status" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="Available">Available (Separated)</SelectItem>
+                                        <SelectItem value="Share of Land">Share of Land</SelectItem>
+                                        <SelectItem value="Pending">Final Approval Pending</SelectItem>
+                                        <SelectItem value="None">None</SelectItem>
+                                    </SelectContent>
+                                </Select>
                             </div>
                         </CardContent>
                     </Card>
