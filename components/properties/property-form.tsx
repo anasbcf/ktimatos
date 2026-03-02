@@ -190,7 +190,20 @@ export function PropertyForm({ agents = [], initialData, initialStatus, initialA
                 return url; // Fallback to original URL
             });
 
-            const secureImageUrls = await Promise.all(uploadPromises);
+            const results = await Promise.allSettled(uploadPromises);
+
+            // Extract only the successfully resolved URLs (either the new Supabase URL or the fallback original URL)
+            // If a promise completely crashed (which is caught inside the map anyway), it won't crash the whole save process.
+            const secureImageUrls = results
+                .map((result) => {
+                    if (result.status === 'fulfilled') {
+                        return result.value;
+                    }
+                    // If absolute catastrophic failure, we log it but don't break the array
+                    console.error("Critical promise rejection during image upload:", result.reason);
+                    return null;
+                })
+                .filter(Boolean) as string[]; // Remove any nulls
 
             const finalData = {
                 ...formData,

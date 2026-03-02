@@ -81,15 +81,31 @@ export async function extractPropertyData(htmlContent: string): Promise<Property
         // 1. Load HTML
         const $ = cheerio.load(htmlContent);
 
-        // 2. Extract Image Arrays deterministically to bypass LLM hallucination
+        // 2. Extract Image Arrays deterministically to bypass LLM hallucination and handle Lazy Loading
         const extractedImages: Set<string> = new Set();
-        $('img').each((i, el) => {
-            const src = $(el).attr('src') || $(el).attr('data-src');
+
+        $('img, a, div').each((i, el) => {
+            const $el = $(el);
+            let src = $el.attr('data-src') || $el.attr('data-original') || $el.attr('data-lazy-src') || $el.attr('src');
+
+            // If it's an anchor tag in a gallery, it often points to the high-res image
+            if ($el.is('a') && $el.attr('data-fancybox')) {
+                src = $el.attr('href') || src;
+            }
+
+            // If it's a div using background-image
+            const bgImage = $el.css('background-image');
+            if (!src && bgImage && bgImage !== 'none') {
+                const match = bgImage.match(/url\((['"])?(.*?)\1\)/);
+                if (match && match[2]) src = match[2];
+            }
+
             // Filter out tiny icons, logos, or tracking pixels
-            if (src && src.startsWith('http') && !src.includes('logo') && !src.includes('icon') && !src.includes('avatar')) {
+            if (src && src.startsWith('http') && !src.includes('logo') && !src.includes('icon') && !src.includes('avatar') && !src.includes('svg')) {
                 extractedImages.add(src);
             }
         });
+
         // Sometimes Bazaraki uses a specific class or data attribute for gallery images
         const galleryImages = Array.from(extractedImages).slice(0, 25); // Cap at 25 images
 
