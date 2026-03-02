@@ -21,11 +21,11 @@ function BookContent() {
             <div className="max-w-4xl mx-auto w-full px-6 flex-1">
 
                 <header className="mb-8 text-center">
-                    <Link href="/" className="inline-block group">
+                    <Link href="/" className="inline-block group mx-auto mb-6">
                         <img
                             src="/logotipo.png"
                             alt="KtimatOS Logo"
-                            className="h-11 w-auto group-hover:opacity-80 transition-opacity mx-auto"
+                            className="h-16 md:h-20 w-auto group-hover:opacity-80 transition-opacity mx-auto"
                         />
                     </Link>
                     <p className="text-gray-400 mt-2 text-[15px]">

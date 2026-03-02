@@ -1,22 +1,23 @@
 'use server'
 
 import { cookies } from 'next/headers';
-import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { auth } from '@clerk/nextjs/server';
 
 const IMPERSONATE_COOKIE_KEY = 'ktimatos_impersonate_org_id';
 
 // Helper estricto interno: Valida que la sesión JWT le pertenezca a un Super Admin
 async function isSuperAdmin() {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return false;
+    const { userId } = await auth();
+    if (!userId) return false;
 
+    const supabase = createAdminClient();
     const { data: profile } = await supabase
         .from('profiles')
         .select('role')
-        .eq('id', user.id)
+        .eq('id', userId)
         .single();
 
     return profile?.role === 'super_admin';
@@ -54,15 +55,14 @@ export async function exitImpersonationAction() {
 // 3. Helper Central de Auth (Sustituto de profile.org_id en el Servidor)
 // IMPORTANTE: Se usará en settings/actions y properties/actions en la Fase 2
 export async function requireActiveOrg() {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { userId } = await auth();
+    if (!userId) throw new Error('Unauthorized User');
 
-    if (!user) throw new Error('Unauthorized User');
-
+    const supabase = createAdminClient();
     const { data: profile } = await supabase
         .from('profiles')
         .select('org_id, role')
-        .eq('id', user.id)
+        .eq('id', userId)
         .single();
 
     if (!profile) throw new Error('Profile Not Found');
@@ -90,7 +90,7 @@ export async function getImpersonationContextUI() {
     if (!(await isSuperAdmin())) return null;
 
     // Obtener el nombre de la víctima para el Escape Hatch Banner
-    const supabase = await createClient();
+    const supabase = createAdminClient();
     const { data: org } = await supabase
         .from('organizations')
         .select('name')

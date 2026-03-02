@@ -102,11 +102,11 @@ export default function BookThanksPage() {
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-[400px] bg-green-500/5 blur-[120px] pointer-events-none rounded-full" />
 
             <header className="absolute top-0 w-full p-6 z-20">
-                <Link href="/" className="flex items-center gap-2 group">
+                <Link href="/" className="flex items-center justify-center md:justify-start gap-2 group mb-6">
                     <img
                         src="/logotipo.png"
                         alt="KtimatOS Logo"
-                        className="h-9 w-auto group-hover:opacity-80 transition-opacity mx-auto md:mx-0"
+                        className="h-16 md:h-20 w-auto group-hover:opacity-80 transition-opacity mx-auto md:mx-0"
                     />
                 </Link>
             </header>
