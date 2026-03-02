@@ -49,8 +49,6 @@ const DEFAULT_DATA: PropertyData = {
     air_conditioning: null,
     pool: null,
     amenities: [],
-    title_deeds: false,
-    amenities: [],
     description_short: "",
     internal_notes: "",
     images_urls: [],
