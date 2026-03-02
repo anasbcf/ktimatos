@@ -22,13 +22,18 @@ export function TenantActions({ orgId, email }: { orgId: string, email?: string 
     async function handleImpersonate() {
         setLoadingImpersonate(true)
         try {
-            await enableImpersonationAction(orgId)
-            // The action will automatically redirect to /dashboard
+            const result = await enableImpersonationAction(orgId)
+            if (result && result.error) {
+                toast.error(result.error)
+                setLoadingImpersonate(false)
+            } else {
+                toast.success("Impersonation active. Redirigiendo...")
+                window.location.assign('/dashboard')
+            }
         } catch (err: any) {
-            if (err?.digest?.startsWith('NEXT_REDIRECT') || err?.message === 'NEXT_REDIRECT') throw err;
             console.error(err)
             toast.error("Failed to assume identity. Check logs.")
-            setLoadingImpersonate(false) // Only stop loading if error, redirect handles success
+            setLoadingImpersonate(false)
         }
     }
 

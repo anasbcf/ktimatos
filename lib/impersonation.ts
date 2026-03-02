@@ -39,7 +39,7 @@ export async function enableImpersonationAction(targetOrgId: string) {
     });
 
     revalidatePath('/', 'layout');
-    redirect('/dashboard');
+    return { success: true };
 }
 
 // 2. Escape Hatch: Salir del Modo Suplantación (Llamado desde el Banner Global)
