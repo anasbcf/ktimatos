@@ -20,25 +20,29 @@ import { redirect } from "next/navigation";
 export const metadata = { title: "Agents Factory - KtimatOS" }
 
 export default async function AgentsPage() {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { requireActiveOrg } = await import('@/lib/impersonation');
+    const { createAdminClient } = await import('@/lib/supabase/admin');
 
-    if (!user) redirect('/login');
+    let activeOrgId;
+    let currentRole;
+    try {
+        const ctx = await requireActiveOrg();
+        activeOrgId = ctx.activeOrgId;
+        currentRole = ctx.role;
+    } catch (error) {
+        redirect('/login');
+    }
 
-    const { data: profile } = await supabase
-        .from('profiles')
-        .select('org_id, role')
-        .eq('id', user.id)
-        .single();
+    if (!activeOrgId) redirect('/login');
 
-    if (!profile || !profile.org_id) redirect('/login');
+    const supabase = createAdminClient();
 
     const { data: agents } = await supabase
         .from('profiles')
         .select('*')
-        .eq('org_id', profile.org_id);
+        .eq('org_id', activeOrgId);
 
-    const isAuthorized = ['admin', 'super_admin', 'broker'].includes(profile.role);
+    const isAuthorized = ['admin', 'super_admin', 'super_admin_impersonating', 'broker'].includes(currentRole);
 
     return (
         <div className="flex flex-col gap-8 p-4 md:p-8 max-w-5xl mx-auto w-full">

@@ -5,26 +5,20 @@ import { createAdminClient } from "@/lib/supabase/admin"
 import { revalidatePath } from "next/cache"
 
 export async function inviteAgentAction(formData: FormData) {
-    const supabase = await createClient()
+    const { requireActiveOrg } = await import('@/lib/impersonation');
 
-    // 1. Authenticate & Authorize
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-    if (authError || !user) return { error: "Unauthorized" }
+    let ctx;
+    try {
+        ctx = await requireActiveOrg();
+    } catch (e: any) {
+        return { error: e.message || "Unauthorized" };
+    }
 
-    // 2.  Verify Broker/Admin Role & Get Org ID
-    const { data: requesterProfile, error: profileError } = await supabase
-        .from('profiles')
-        .select('org_id, role')
-        .eq('id', user.id)
-        .single()
-
-    if (profileError || !requesterProfile) return { error: "Profile not found" }
-
-    if (!['super_admin', 'broker', 'admin'].includes(requesterProfile.role)) {
+    if (!['super_admin', 'super_admin_impersonating', 'broker', 'admin'].includes(ctx.role)) {
         return { error: "Insufficient permissions to invite agents." }
     }
 
-    const orgId = requesterProfile.org_id
+    const orgId = ctx.activeOrgId
     if (!orgId) return { error: "You are not part of an organization." }
 
     const email = formData.get('email') as string
@@ -87,19 +81,16 @@ export async function inviteAgentAction(formData: FormData) {
 }
 
 export async function editAgentAction(formData: FormData) {
-    const supabase = await createClient()
+    const { requireActiveOrg } = await import('@/lib/impersonation');
 
-    // 1. Authenticate & Authorize
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-    if (authError || !user) return { error: "Unauthorized" }
+    let ctx;
+    try {
+        ctx = await requireActiveOrg();
+    } catch (e: any) {
+        return { error: e.message || "Unauthorized" };
+    }
 
-    const { data: requesterProfile } = await supabase
-        .from('profiles')
-        .select('org_id, role')
-        .eq('id', user.id)
-        .single()
-
-    if (!requesterProfile || !['super_admin', 'broker', 'admin'].includes(requesterProfile.role)) {
+    if (!['super_admin', 'super_admin_impersonating', 'broker', 'admin'].includes(ctx.role)) {
         return { error: "Insufficient permissions to edit agents." }
     }
 
@@ -126,7 +117,7 @@ export async function editAgentAction(formData: FormData) {
             .eq('id', agentId)
             .single()
 
-        if (targetAgent?.org_id !== requesterProfile.org_id) {
+        if (targetAgent?.org_id !== ctx.activeOrgId) {
             return { error: "You cannot edit an agent outside your organization." }
         }
 
