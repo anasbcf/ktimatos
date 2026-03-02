@@ -48,9 +48,9 @@ export default async function AgentsPage() {
         <div className="flex flex-col gap-8 p-4 md:p-8 max-w-5xl mx-auto w-full">
             <div className="flex items-center justify-between border-b border-neutral-800 pb-6">
                 <div className="flex flex-col gap-2">
-                    <h1 className="text-3xl font-bold tracking-tight text-white">Agent Factory</h1>
+                    <h1 className="text-3xl font-bold tracking-tight text-white">Agents</h1>
                     <p className="text-neutral-400">
-                        Gestiona los miembros de tu equipo. Sus números de WhatsApp determinan quién puede enviar comandos de voz al Cerebro Ejecutivo.
+                        Manage your team members. Their WhatsApp numbers specify who will have access to the AI assistant.
                     </p>
                 </div>
                 {isAuthorized && agents && agents.length > 0 && <InviteAgentDialog />}
@@ -59,26 +59,26 @@ export default async function AgentsPage() {
             {!isAuthorized && (
                 <div className="rounded-md bg-red-900/20 p-4 border border-red-900/50 flex items-center gap-3">
                     <ShieldAlert className="h-5 w-5 text-red-500" />
-                    <p className="text-sm text-red-400">No tienes permisos de Administrador o Broker para reclutar nuevos agentes.</p>
+                    <p className="text-sm text-red-400">You do not have Admin or Broker permissions to recruit new agents.</p>
                 </div>
             )}
 
             {(!agents || agents.length === 0) ? (
                 <EmptyState
                     icon={Users}
-                    title="No hay Agentes registrados"
-                    description="Invita a tu equipo para que la IA sepa en quién delegar los clientes VIP o quién puede actualizar el CRM por voz."
-                    action={isAuthorized ? <InviteAgentDialog trigger={<Button size="lg" className="font-semibold bg-white text-black hover:bg-neutral-200 gap-2"><UserPlus className="h-4 w-4" /> Registrar Agente</Button>} /> : undefined}
+                    title="No Agents Registered"
+                    description="Invite your team so they can access the CRM and the AI capabilities."
+                    action={isAuthorized ? <InviteAgentDialog trigger={<Button size="lg" className="font-semibold bg-white text-black hover:bg-neutral-200 gap-2"><UserPlus className="h-4 w-4" /> Add Agent</Button>} /> : undefined}
                 />
             ) : (
                 <div className="border border-neutral-800 rounded-xl overflow-hidden shadow-sm bg-neutral-900">
                     <Table>
                         <TableHeader>
                             <TableRow className="bg-neutral-950/50 border-neutral-800 hover:bg-neutral-950/50">
-                                <TableHead className="text-neutral-400 font-medium h-12">Agente</TableHead>
-                                <TableHead className="text-neutral-400 font-medium h-12">Rol</TableHead>
-                                <TableHead className="text-neutral-400 font-medium h-12">WhatsApp Enlazado</TableHead>
-                                <TableHead className="text-neutral-400 font-medium h-12">Conexión IA</TableHead>
+                                <TableHead className="text-neutral-400 font-medium h-12">Agent</TableHead>
+                                <TableHead className="text-neutral-400 font-medium h-12">Role</TableHead>
+                                <TableHead className="text-neutral-400 font-medium h-12">Linked WhatsApp</TableHead>
+                                <TableHead className="text-neutral-400 font-medium h-12">AI Connection</TableHead>
                                 {isAuthorized && <TableHead className="text-neutral-400 font-medium h-12 text-right">Settings</TableHead>}
                             </TableRow>
                         </TableHeader>
@@ -90,7 +90,7 @@ export default async function AgentsPage() {
                                             <AvatarFallback className="bg-neutral-800 text-neutral-300 font-bold">{agent.full_name?.[0] || 'A'}</AvatarFallback>
                                         </Avatar>
                                         <div className="flex flex-col">
-                                            <span className="font-semibold text-neutral-200">{agent.full_name || 'Agente Sin Nombre'}</span>
+                                            <span className="font-semibold text-neutral-200">{agent.full_name || 'Unnamed Agent'}</span>
                                             {agent.email && <span className="text-xs text-neutral-500">{agent.email}</span>}
                                         </div>
                                     </TableCell>
@@ -102,7 +102,7 @@ export default async function AgentsPage() {
                                         </Badge>
                                     </TableCell>
                                     <TableCell className="text-emerald-400/90 font-mono text-xs tracking-wider">
-                                        {agent.whatsapp_number ? `+${agent.whatsapp_number}` : <span className="text-neutral-600">No vinculado</span>}
+                                        {agent.whatsapp_number ? `+${agent.whatsapp_number}` : <span className="text-neutral-600">Not Linked</span>}
                                     </TableCell>
                                     <TableCell>
                                         {agent.whatsapp_number ? (
@@ -111,7 +111,7 @@ export default async function AgentsPage() {
                                                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                                                     <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                                                 </span>
-                                                <span className="text-xs font-medium text-neutral-400">Escuchando</span>
+                                                <span className="text-xs font-medium text-neutral-400">Listening</span>
                                             </div>
                                         ) : (
                                             <div className="flex items-center gap-2">
