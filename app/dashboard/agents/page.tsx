@@ -46,10 +46,10 @@ export default async function AgentsPage() {
 
     return (
         <div className="flex flex-col gap-8 p-4 md:p-8 max-w-5xl mx-auto w-full">
-            <div className="flex items-center justify-between border-b border-neutral-800 pb-6">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-6">
                 <div className="flex flex-col gap-2">
-                    <h1 className="text-3xl font-bold tracking-tight text-white">Agents</h1>
-                    <p className="text-neutral-400">
+                    <h1 className="text-3xl font-bold tracking-tight text-slate-900">Agents</h1>
+                    <p className="text-slate-500">
                         Manage your team members. Their WhatsApp numbers specify who will have access to the AI assistant.
                     </p>
                 </div>
@@ -68,41 +68,41 @@ export default async function AgentsPage() {
                     icon={Users}
                     title="No Agents Registered"
                     description="Invite your team so they can access the CRM and the AI capabilities."
-                    action={isAuthorized ? <InviteAgentDialog trigger={<Button size="lg" className="font-semibold bg-white text-black hover:bg-neutral-200 gap-2"><UserPlus className="h-4 w-4" /> Add Agent</Button>} /> : undefined}
+                    action={isAuthorized ? <InviteAgentDialog trigger={<Button size="lg" className="font-semibold bg-blue-600 text-white hover:bg-blue-700 gap-2"><UserPlus className="h-4 w-4" /> Add Agent</Button>} /> : undefined}
                 />
             ) : (
-                <div className="border border-neutral-800 rounded-xl overflow-hidden shadow-sm bg-neutral-900">
+                <div className="border border-slate-200 rounded-xl overflow-hidden shadow-sm bg-white">
                     <Table>
                         <TableHeader>
-                            <TableRow className="bg-neutral-950/50 border-neutral-800 hover:bg-neutral-950/50">
-                                <TableHead className="text-neutral-400 font-medium h-12">Agent</TableHead>
-                                <TableHead className="text-neutral-400 font-medium h-12">Role</TableHead>
-                                <TableHead className="text-neutral-400 font-medium h-12">Linked WhatsApp</TableHead>
-                                <TableHead className="text-neutral-400 font-medium h-12">AI Connection</TableHead>
-                                {isAuthorized && <TableHead className="text-neutral-400 font-medium h-12 text-right">Settings</TableHead>}
+                            <TableRow className="bg-slate-50/50 border-slate-200 hover:bg-slate-50/50">
+                                <TableHead className="text-slate-500 font-medium h-12">Agent</TableHead>
+                                <TableHead className="text-slate-500 font-medium h-12">Role</TableHead>
+                                <TableHead className="text-slate-500 font-medium h-12">Linked WhatsApp</TableHead>
+                                <TableHead className="text-slate-500 font-medium h-12">AI Connection</TableHead>
+                                {isAuthorized && <TableHead className="text-slate-500 font-medium h-12 text-right">Settings</TableHead>}
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {agents?.map((agent) => (
-                                <TableRow key={agent.id} className="border-neutral-800 hover:bg-neutral-800/50 transition-colors">
+                                <TableRow key={agent.id} className="border-slate-100 hover:bg-slate-50 transition-colors">
                                     <TableCell className="flex items-center gap-3 py-4">
-                                        <Avatar className="h-10 w-10 border border-neutral-700 bg-neutral-800">
-                                            <AvatarFallback className="bg-neutral-800 text-neutral-300 font-bold">{agent.full_name?.[0] || 'A'}</AvatarFallback>
+                                        <Avatar className="h-10 w-10 border border-slate-200 bg-slate-100">
+                                            <AvatarFallback className="bg-blue-100 text-blue-700 font-bold">{agent.full_name?.[0] || 'A'}</AvatarFallback>
                                         </Avatar>
                                         <div className="flex flex-col">
-                                            <span className="font-semibold text-neutral-200">{agent.full_name || 'Unnamed Agent'}</span>
-                                            {agent.email && <span className="text-xs text-neutral-500">{agent.email}</span>}
+                                            <span className="font-semibold text-slate-900">{agent.full_name || 'Unnamed Agent'}</span>
+                                            {agent.email && <span className="text-xs text-slate-500">{agent.email}</span>}
                                         </div>
                                     </TableCell>
-                                    <TableCell className="capitalize text-neutral-300">
+                                    <TableCell className="capitalize text-slate-700">
                                         <Badge variant="outline" className={`
-                                            ${agent.role === 'admin' || agent.role === 'broker' ? 'border-amber-500/30 text-amber-500 bg-amber-500/10' : 'border-neutral-700 text-neutral-400'}
+                                            ${agent.role === 'admin' || agent.role === 'broker' ? 'border-amber-500/30 text-amber-600 bg-amber-50' : 'border-slate-200 text-slate-500'}
                                         `}>
                                             {agent.role}
                                         </Badge>
                                     </TableCell>
-                                    <TableCell className="text-emerald-400/90 font-mono text-xs tracking-wider">
-                                        {agent.whatsapp_number ? `+${agent.whatsapp_number}` : <span className="text-neutral-600">Not Linked</span>}
+                                    <TableCell className="text-emerald-600 font-mono text-xs tracking-wider">
+                                        {agent.whatsapp_number ? `+${agent.whatsapp_number}` : <span className="text-slate-400">Not Linked</span>}
                                     </TableCell>
                                     <TableCell>
                                         {agent.whatsapp_number ? (
@@ -111,14 +111,14 @@ export default async function AgentsPage() {
                                                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                                                     <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                                                 </span>
-                                                <span className="text-xs font-medium text-neutral-400">Listening</span>
+                                                <span className="text-xs font-medium text-slate-500">Listening</span>
                                             </div>
                                         ) : (
                                             <div className="flex items-center gap-2">
                                                 <span className="relative flex h-2 w-2">
-                                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-neutral-600"></span>
+                                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-slate-300"></span>
                                                 </span>
-                                                <span className="text-xs font-medium text-neutral-600">Offline</span>
+                                                <span className="text-xs font-medium text-slate-400">Offline</span>
                                             </div>
                                         )}
                                     </TableCell>

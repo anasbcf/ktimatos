@@ -50,47 +50,47 @@ export function InviteAgentDialog({ trigger }: { trigger?: React.ReactNode }) {
                     </Button>
                 )}
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[450px] bg-neutral-900 border-neutral-800 text-white">
+            <DialogContent className="sm:max-w-[450px] bg-white border-slate-200 text-slate-900 shadow-xl">
                 <DialogHeader>
-                    <DialogTitle className="text-xl">Vincular Nuevo Agente</DialogTitle>
-                    <DialogDescription className="text-neutral-400">
-                        Añade un miembro a tu organización. El Cerebro Ejecutivo autenticará su número para permitirle comandos de voz.
+                    <DialogTitle className="text-xl">Add New Agent</DialogTitle>
+                    <DialogDescription className="text-slate-500">
+                        Add a member to your organization. Their linked WhatsApp number will grant them access to voice commands.
                     </DialogDescription>
                 </DialogHeader>
                 <form action={handleSubmit} className="grid gap-5 py-4">
                     <div className="grid gap-2">
-                        <Label htmlFor="full_name" className="text-neutral-300">
-                            Nombre del Agente
+                        <Label htmlFor="full_name" className="text-slate-700 font-medium">
+                            Agent Name
                         </Label>
-                        <Input id="full_name" name="full_name" placeholder="Ej: Elena Rodríguez" required className="bg-neutral-950 border-neutral-800 text-white focus-visible:ring-indigo-500" />
+                        <Input id="full_name" name="full_name" placeholder="E.g: Elena Rodriguez" required className="bg-slate-50 border-slate-200 text-slate-900 focus-visible:ring-blue-500" />
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="email" className="text-neutral-300">
-                            Correo Electrónico
+                        <Label htmlFor="email" className="text-slate-700 font-medium">
+                            Email Address
                         </Label>
-                        <Input id="email" name="email" type="email" placeholder="elena@agencia.com" required className="bg-neutral-950 border-neutral-800 text-white focus-visible:ring-indigo-500" />
+                        <Input id="email" name="email" type="email" placeholder="elena@agency.com" required className="bg-slate-50 border-slate-200 text-slate-900 focus-visible:ring-blue-500" />
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="role" className="text-neutral-300">
-                            Nivel de Acceso (Rol)
+                        <Label htmlFor="role" className="text-slate-700 font-medium">
+                            Access Level (Role)
                         </Label>
                         <Select name="role" defaultValue="agent" required>
-                            <SelectTrigger className="bg-neutral-950 border-neutral-800 text-white focus:ring-indigo-500">
-                                <SelectValue placeholder="Selecciona un Rol" />
+                            <SelectTrigger className="bg-slate-50 border-slate-200 text-slate-900 focus:ring-blue-500">
+                                <SelectValue placeholder="Select a Role" />
                             </SelectTrigger>
-                            <SelectContent className="bg-neutral-900 border-neutral-800 text-white">
-                                <SelectItem value="agent" className="focus:bg-neutral-800 focus:text-white">
+                            <SelectContent className="bg-white border-slate-200 text-slate-900">
+                                <SelectItem value="agent" className="focus:bg-slate-100">
                                     <div className="flex items-center gap-2">
                                         <BadgeCheck className="h-4 w-4 text-emerald-500" />
-                                        <span>Agent (Solo BBDD e IA)</span>
+                                        <span>Agent (CRM & AI Access)</span>
                                     </div>
                                 </SelectItem>
-                                <SelectItem value="broker" className="focus:bg-neutral-800 focus:text-white">
+                                <SelectItem value="broker" className="focus:bg-slate-100">
                                     <div className="flex items-center gap-2">
                                         <ShieldAlert className="h-4 w-4 text-amber-500" />
-                                        <span>Broker (Acceso VIP y Config)</span>
+                                        <span>Broker (Manager Access)</span>
                                     </div>
                                 </SelectItem>
                             </SelectContent>
@@ -98,22 +98,22 @@ export function InviteAgentDialog({ trigger }: { trigger?: React.ReactNode }) {
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="whatsapp" className="text-neutral-300">
-                            Línea WhatsApp (Auth)
+                        <Label htmlFor="whatsapp" className="text-slate-700 font-medium">
+                            WhatsApp Number
                         </Label>
                         <div className="space-y-2">
-                            <Input id="whatsapp" name="whatsapp_number" type="tel" placeholder="34600123456" required className="bg-neutral-950 border-neutral-800 font-mono text-emerald-400 focus-visible:ring-emerald-500" />
-                            <div className="p-2.5 bg-rose-500/10 border-l-2 border-rose-500 rounded-r-md">
-                                <p className="text-xs text-rose-400 font-medium">
-                                    ⚠️ No uses el símbolo '+' ni espacios. Incluye el código del país (ej: 34 para España, 357 para Chipre).
+                            <Input id="whatsapp" name="whatsapp_number" type="tel" placeholder="35799123456" required className="bg-slate-50 border-slate-200 font-mono text-slate-900 focus-visible:ring-blue-500" />
+                            <div className="p-2.5 bg-blue-50 border-l-2 border-blue-500 rounded-r-md">
+                                <p className="text-xs text-blue-700 font-medium">
+                                    Only numbers. Do not use the "+" symbol or spaces. Remember to include the country code (e.g. 357 for Cyprus).
                                 </p>
                             </div>
                         </div>
                     </div>
 
                     <DialogFooter className="mt-2">
-                        <Button type="submit" disabled={loading} className="w-full bg-white text-black hover:bg-neutral-200">
-                            {loading ? "Reclutando Agente..." : "Enviar Invitación Oficial"}
+                        <Button type="submit" disabled={loading} className="w-full bg-blue-600 text-white hover:bg-blue-700 font-semibold shadow-sm">
+                            {loading ? "Adding Agent..." : "Send Official Invitation"}
                         </Button>
                     </DialogFooter>
                 </form>
