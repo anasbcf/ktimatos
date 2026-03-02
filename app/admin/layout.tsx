@@ -10,7 +10,8 @@ import {
     BreadcrumbPage,
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import { createClient } from "@/lib/supabase/server"
+import { createAdminClient } from "@/lib/supabase/admin"
+import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 
 export default async function AdminLayout({
@@ -18,17 +19,17 @@ export default async function AdminLayout({
 }: {
     children: React.ReactNode
 }) {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const { userId } = await auth()
 
-    if (!user) {
-        redirect('/login')
+    if (!userId) {
+        redirect('/sign-in')
     }
 
+    const supabase = createAdminClient()
     const { data: profile } = await supabase
         .from('profiles')
         .select('role')
-        .eq('id', user.id)
+        .eq('id', userId)
         .single()
 
     if (!profile || profile.role !== 'super_admin') {
