@@ -1,4 +1,5 @@
-import { createClient } from "@/lib/supabase/server";
+import { requireActiveOrg } from "@/lib/impersonation";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { PropertyForm } from "@/components/properties/property-form";
 import { savePropertyAction } from "../../actions";
 import { redirect } from "next/navigation";
@@ -7,16 +8,10 @@ import Link from "next/link";
 import { PropertyData } from "@/lib/ai/extractor";
 
 export default async function EditPropertyPage({ params }: { params: { id: string } }) {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { activeOrgId } = await requireActiveOrg();
+    const supabase = createAdminClient();
 
-    if (!user) {
-        redirect('/login');
-    }
-
-    const { data: profile } = await supabase.from('profiles').select('org_id').eq('id', user.id).single();
-
-    if (!profile?.org_id) {
+    if (!activeOrgId) {
         return <div className="p-8">No organization found.</div>;
     }
 
@@ -25,7 +20,7 @@ export default async function EditPropertyPage({ params }: { params: { id: strin
         .from('properties')
         .select('*')
         .eq('id', params.id)
-        .eq('org_id', profile.org_id) // Security check
+        .eq('org_id', activeOrgId) // Security check
         .single();
 
     if (!property) {
@@ -36,7 +31,7 @@ export default async function EditPropertyPage({ params }: { params: { id: strin
     const { data: agents } = await supabase
         .from('profiles')
         .select('id, full_name')
-        .eq('org_id', profile.org_id);
+        .eq('org_id', activeOrgId);
 
     // Fetch assigned agents
     const { data: assigned } = await supabase

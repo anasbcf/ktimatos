@@ -21,10 +21,7 @@ export default clerkMiddleware(async (auth, req) => {
     const { userId, sessionClaims } = await auth();
     const role = (sessionClaims?.metadata as any)?.role;
 
-    // 1. Post-login Redirect logic for Superadmins
-    if (userId && req.nextUrl.pathname.startsWith('/dashboard') && role === 'super_admin') {
-        return NextResponse.redirect(new URL('/admin', req.url));
-    }
+    // Removed aggressive Post-login Redirect logic for Superadmins to allow Impersonation of /dashboard.
 
     if (isProtectedRoute(req)) {
         // Basic protection (signed in)

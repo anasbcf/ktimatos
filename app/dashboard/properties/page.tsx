@@ -1,6 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { requireActiveOrg } from "@/lib/impersonation";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -8,13 +10,10 @@ import { Plus, MapPin, BedDouble, Bath, Euro, Edit, User } from "lucide-react";
 import Image from "next/image";
 
 export default async function PropertiesPage() {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { activeOrgId } = await requireActiveOrg();
+    const supabase = createAdminClient();
 
-    // Fetch properties for Org
-    const { data: profile } = await supabase.from('profiles').select('org_id').eq('id', user!.id).single();
-
-    if (!profile?.org_id) {
+    if (!activeOrgId) {
         return (
             <div className="flex flex-col items-center justify-center p-8 border border-dashed rounded-lg h-64 text-muted-foreground">
                 <p>No organization associated with your profile.</p>
@@ -32,7 +31,7 @@ export default async function PropertiesPage() {
                 )
             )
         `)
-        .eq('org_id', profile.org_id)
+        .eq('org_id', activeOrgId)
         .order('created_at', { ascending: false });
 
     return (

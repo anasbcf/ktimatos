@@ -1,4 +1,5 @@
-import { createClient } from "@/lib/supabase/server";
+import { requireActiveOrg } from "@/lib/impersonation";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { PropertyForm } from "@/components/properties/property-form";
 import { savePropertyAction } from "../actions";
 import { redirect } from "next/navigation";
@@ -7,22 +8,15 @@ import Link from "next/link";
 import { PropertyData } from "@/lib/ai/extractor";
 
 export default async function NewPropertyPage() {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user) {
-        redirect('/login');
-    }
-
-    // Get agents for the organization to populate the multi-select
-    const { data: profile } = await supabase.from('profiles').select('org_id').eq('id', user.id).single();
+    const { activeOrgId } = await requireActiveOrg();
+    const supabase = createAdminClient();
 
     let agents: any[] = [];
-    if (profile?.org_id) {
+    if (activeOrgId) {
         const { data } = await supabase
             .from('profiles')
             .select('id, full_name')
-            .eq('org_id', profile.org_id);
+            .eq('org_id', activeOrgId);
 
         agents = data || [];
     }
