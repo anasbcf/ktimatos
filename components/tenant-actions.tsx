@@ -5,7 +5,7 @@ import { setupTenantAction, sendTenantInviteAction } from "@/app/admin/actions"
 import { enableImpersonationAction } from '@/lib/impersonation'
 import { toast } from "sonner"
 import { Loader2, KeyRound, Mail, ExternalLink, VenetianMask } from "lucide-react"
-import { isRedirectError } from "next/dist/client/components/redirect"
+import { isRedirectError } from "next/navigation"
 import { useState } from "react"
 import {
     DropdownMenu,
