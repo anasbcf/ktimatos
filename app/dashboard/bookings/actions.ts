@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 import twilio from "twilio";
 import { createServiceClient } from "@/lib/supabase/service";
 
-const twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+const twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID || 'dummy_sid', process.env.TWILIO_AUTH_TOKEN || 'dummy_token');
 
 export async function updateBookingStatus(bookingId: string, status: 'confirmed' | 'rejected') {
     const supabase = await createClient();

@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service'; // Use service client for agent lookup?
 import twilio from 'twilio'; // Needed for sending confirmation to lead
 
-const twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+const twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID || 'dummy_sid', process.env.TWILIO_AUTH_TOKEN || 'dummy_token');
 
 import fs from 'fs';
 import path from 'path';
