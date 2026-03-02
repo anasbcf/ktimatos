@@ -1,0 +1,189 @@
+[2026-02-18T03:29:17.043Z] 🔌 [TWILIO WEBHOOK] Incoming request...
+[2026-02-18T03:29:42.057Z] 🔌 [TWILIO WEBHOOK] Incoming request...
+[2026-02-18T03:29:42.057Z] 📦 [TWILIO WEBHOOK] Headers: {"accept":"*/*","accept-encoding":"gzip, deflate, br","connection":"keep-alive","content-length":"119","content-type":"application/x-www-form-urlencoded;charset=UTF-8","host":"localhost:3000","user-agent":"node-fetch","x-forwarded-for":"127.0.0.1","x-forwarded-host":"localhost:3000","x-forwarded-port":"3000","x-forwarded-proto":"http"}
+[2026-02-18T03:29:42.058Z] 📦 [TWILIO WEBHOOK] formData received
+[2026-02-18T03:29:42.058Z] 📦 [TWILIO WEBHOOK] Form Data parsed: {"From":"whatsapp:+34617896422","Body":"Hola, busco apartamento en Limassol","AccountSid":"AC02837320334109cf22802d08010c9102"}
+[2026-02-18T03:29:57.220Z] 🔌 [TWILIO WEBHOOK] Incoming request...
+[2026-02-18T03:29:57.221Z] 📦 [TWILIO WEBHOOK] Headers: {"accept":"*/*","accept-encoding":"gzip, deflate, br","connection":"keep-alive","content-length":"119","content-type":"application/x-www-form-urlencoded;charset=UTF-8","host":"localhost:3000","user-agent":"node-fetch","x-forwarded-for":"127.0.0.1","x-forwarded-host":"localhost:3000","x-forwarded-port":"3000","x-forwarded-proto":"http"}
+[2026-02-18T03:29:57.224Z] 📦 [TWILIO WEBHOOK] formData received
+[2026-02-18T03:29:57.224Z] 📦 [TWILIO WEBHOOK] Form Data parsed: {"From":"whatsapp:+34617896422","Body":"Hola, busco apartamento en Limassol","AccountSid":"AC02837320334109cf22802d08010c9102"}
+[2026-02-18T03:29:57.225Z] 🔎 [TWILIO WEBHOOK] Checking for Agent: whatsapp:+34617896422
+[2026-02-18T03:29:57.227Z] ❌ Webhook Error: supabaseAdmin is not defined 
+ ReferenceError: supabaseAdmin is not defined
+    at POST (/Users/anasbouchafra/Desktop/Work/NODEX/Real Estate Cyprus/app/.next/dev/server/chunks/[root-of-the-server]__cc10f8d4._.js:189:59)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async AppRouteRouteModule.do (/Users/anasbouchafra/Desktop/Work/NODEX/Real Estate Cyprus/app/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:5:37866)
+    at async AppRouteRouteModule.handle (/Users/anasbouchafra/Desktop/Work/NODEX/Real Estate Cyprus/app/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:5:45156)
+    at async responseGenerator (/Users/anasbouchafra/Desktop/Work/NODEX/Real Estate Cyprus/app/.next/dev/server/chunks/node_modules_next_ca6aab65._.js:15344:38)
+    at async AppRouteRouteModule.handleResponse (/Users/anasbouchafra/Desktop/Work/NODEX/Real Estate Cyprus/app/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:1:191938)
+    at async handleResponse (/Users/anasbouchafra/Desktop/Work/NODEX/Real Estate Cyprus/app/.next/dev/server/chunks/node_modules_next_ca6aab65._.js:15407:32)
+    at async Module.handler (/Users/anasbouchafra/Desktop/Work/NODEX/Real Estate Cyprus/app/.next/dev/server/chunks/node_modules_next_ca6aab65._.js:15460:13)
+    at async DevServer.renderToResponseWithComponentsImpl (/Users/anasbouchafra/Desktop/Work/NODEX/Real Estate Cyprus/app/node_modules/next/dist/server/base-server.js:1442:9)
+    at async DevServer.renderPageComponent (/Users/anasbouchafra/Desktop/Work/NODEX/Real Estate Cyprus/app/node_modules/next/dist/server/base-server.js:1494:24)
+    at async DevServer.renderToResponseImpl (/Users/anasbouchafra/Desktop/Work/NODEX/Real Estate Cyprus/app/node_modules/next/dist/server/base-server.js:1544:32)
+    at async DevServer.pipeImpl (/Users/anasbouchafra/Desktop/Work/NODEX/Real Estate Cyprus/app/node_modules/next/dist/server/base-server.js:1038:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/anasbouchafra/Desktop/Work/NODEX/Real Estate Cyprus/app/node_modules/next/dist/server/next-server.js:395:17)
+    at async DevServer.handleRequestImpl (/Users/anasbouchafra/Desktop/Work/NODEX/Real Estate Cyprus/app/node_modules/next/dist/server/base-server.js:929:17)
+    at async /Users/anasbouchafra/Desktop/Work/NODEX/Real Estate Cyprus/app/node_modules/next/dist/server/dev/next-dev-server.js:387:20
+    at async Span.traceAsyncFn (/Users/anasbouchafra/Desktop/Work/NODEX/Real Estate Cyprus/app/node_modules/next/dist/trace/trace.js:157:20)
+    at async DevServer.handleRequest (/Users/anasbouchafra/Desktop/Work/NODEX/Real Estate Cyprus/app/node_modules/next/dist/server/dev/next-dev-server.js:383:24)
+    at async invokeRender (/Users/anasbouchafra/Desktop/Work/NODEX/Real Estate Cyprus/app/node_modules/next/dist/server/lib/router-server.js:248:21)
+    at async handleRequest (/Users/anasbouchafra/Desktop/Work/NODEX/Real Estate Cyprus/app/node_modules/next/dist/server/lib/router-server.js:447:24)
+    at async requestHandlerImpl (/Users/anasbouchafra/Desktop/Work/NODEX/Real Estate Cyprus/app/node_modules/next/dist/server/lib/router-server.js:496:13)
+    at async Server.requestListener (/Users/anasbouchafra/Desktop/Work/NODEX/Real Estate Cyprus/app/node_modules/next/dist/server/lib/start-server.js:226:13)
+[2026-02-18T03:30:08.717Z] 🔌 [TWILIO WEBHOOK] Incoming request...
+[2026-02-18T03:30:08.717Z] 📦 [TWILIO WEBHOOK] Headers: {"accept":"*/*","accept-encoding":"gzip, deflate, br","connection":"keep-alive","content-length":"119","content-type":"application/x-www-form-urlencoded;charset=UTF-8","host":"localhost:3000","user-agent":"node-fetch","x-forwarded-for":"127.0.0.1","x-forwarded-host":"localhost:3000","x-forwarded-port":"3000","x-forwarded-proto":"http"}
+[2026-02-18T03:30:08.720Z] 📦 [TWILIO WEBHOOK] formData received
+[2026-02-18T03:30:08.721Z] 📦 [TWILIO WEBHOOK] Form Data parsed: {"From":"whatsapp:+34617896422","Body":"Hola, busco apartamento en Limassol","AccountSid":"AC02837320334109cf22802d08010c9102"}
+[2026-02-18T03:30:08.722Z] 🔎 [TWILIO WEBHOOK] Checking for Agent: whatsapp:+34617896422
+[2026-02-18T03:30:08.976Z] 🔎 [TWILIO WEBHOOK] Agent found? true
+[2026-02-18T03:30:31.268Z] 🔌 [TWILIO WEBHOOK] Incoming request...
+[2026-02-18T03:30:31.268Z] 📦 [TWILIO WEBHOOK] Headers: {"accept":"*/*","accept-encoding":"gzip, deflate, br","connection":"keep-alive","content-length":"119","content-type":"application/x-www-form-urlencoded;charset=UTF-8","host":"localhost:3000","user-agent":"node-fetch","x-forwarded-for":"127.0.0.1","x-forwarded-host":"localhost:3000","x-forwarded-port":"3000","x-forwarded-proto":"http"}
+[2026-02-18T03:30:31.269Z] 📦 [TWILIO WEBHOOK] formData received
+[2026-02-18T03:30:31.269Z] 📦 [TWILIO WEBHOOK] Form Data parsed: {"From":"whatsapp:+19998887776","Body":"Hola, busco apartamento en Limassol","AccountSid":"AC02837320334109cf22802d08010c9102"}
+[2026-02-18T03:30:31.271Z] 🔎 [TWILIO WEBHOOK] Checking for Agent: whatsapp:+19998887776
+[2026-02-18T03:30:31.570Z] 🔎 [TWILIO WEBHOOK] Agent found? false
+[2026-02-18T03:30:31.571Z] 🔎 [TWILIO WEBHOOK] Looking for existing lead: whatsapp:+19998887776
+[2026-02-18T03:30:31.762Z] 🔎 [TWILIO WEBHOOK] existingLead: false
+[2026-02-18T03:30:32.023Z] 👤 [TWILIO WEBHOOK] Lead identified: 6d94d088-0da6-4902-897d-73c25fd344c5, Org: a2a11d33-9dee-478e-9a22-0f97401c5120
+[2026-02-18T03:30:50.441Z] 🔌 [TWILIO WEBHOOK] Incoming request...
+[2026-02-18T03:30:50.441Z] 📦 [TWILIO WEBHOOK] Headers: {"accept":"*/*","accept-encoding":"gzip, deflate, br","connection":"keep-alive","content-length":"119","content-type":"application/x-www-form-urlencoded;charset=UTF-8","host":"localhost:3000","user-agent":"node-fetch","x-forwarded-for":"127.0.0.1","x-forwarded-host":"localhost:3000","x-forwarded-port":"3000","x-forwarded-proto":"http"}
+[2026-02-18T03:30:50.442Z] 📦 [TWILIO WEBHOOK] formData received
+[2026-02-18T03:30:50.442Z] 📦 [TWILIO WEBHOOK] Form Data parsed: {"From":"whatsapp:+19998887776","Body":"Hola, busco apartamento en Limassol","AccountSid":"AC02837320334109cf22802d08010c9102"}
+[2026-02-18T03:30:50.443Z] 🔎 [TWILIO WEBHOOK] Checking for Agent: whatsapp:+19998887776
+[2026-02-18T03:30:50.654Z] 🔎 [TWILIO WEBHOOK] Agent found? false
+[2026-02-18T03:30:50.655Z] 🔎 [TWILIO WEBHOOK] Looking for existing lead: whatsapp:+19998887776
+[2026-02-18T03:30:50.761Z] 🔎 [TWILIO WEBHOOK] existingLead: true
+[2026-02-18T03:30:50.762Z] 👤 [TWILIO WEBHOOK] Lead identified: 6d94d088-0da6-4902-897d-73c25fd344c5, Org: a2a11d33-9dee-478e-9a22-0f97401c5120
+[2026-02-18T03:30:50.762Z] 🔎 [TWILIO WEBHOOK] Looking for open conversation for lead: 6d94d088-0da6-4902-897d-73c25fd344c5
+[2026-02-18T03:30:50.888Z] ✅ [TWILIO WEBHOOK] Open conversation found: 29cd5d17-2693-4128-af49-8eb1b7fd9859
+[2026-02-18T03:30:50.888Z] 🏗️ [TWILIO WEBHOOK] Storing message in conversation: 29cd5d17-2693-4128-af49-8eb1b7fd9859
+[2026-02-18T03:30:51.055Z] ✅ [TWILIO WEBHOOK] Message stored: 17d8ad07-b733-4f70-8e4c-a5f5b452a6e3
+[2026-02-18T03:30:51.055Z] 🧠 [TWILIO WEBHOOK] Triggering AI Brain...
+[2026-02-18T03:30:54.100Z] ✅ [TWILIO WEBHOOK] Brain processing triggered.
+[2026-02-18T03:31:06.207Z] 🔌 [TWILIO WEBHOOK] Incoming request...
+[2026-02-18T03:31:06.207Z] 📦 [TWILIO WEBHOOK] Headers: {"accept":"*/*","accept-encoding":"gzip, deflate, br","connection":"keep-alive","content-length":"119","content-type":"application/x-www-form-urlencoded;charset=UTF-8","host":"localhost:3000","user-agent":"node-fetch","x-forwarded-for":"127.0.0.1","x-forwarded-host":"localhost:3000","x-forwarded-port":"3000","x-forwarded-proto":"http"}
+[2026-02-18T03:31:06.208Z] 📦 [TWILIO WEBHOOK] formData received
+[2026-02-18T03:31:06.208Z] 📦 [TWILIO WEBHOOK] Form Data parsed: {"From":"whatsapp:+19998887776","Body":"Hola, busco apartamento en Limassol","AccountSid":"AC02837320334109cf22802d08010c9102"}
+[2026-02-18T03:31:06.208Z] 🔎 [TWILIO WEBHOOK] Checking for Agent: whatsapp:+19998887776
+[2026-02-18T03:31:06.385Z] 🔎 [TWILIO WEBHOOK] Agent found? false
+[2026-02-18T03:31:06.385Z] 🔎 [TWILIO WEBHOOK] Looking for existing lead: whatsapp:+19998887776
+[2026-02-18T03:31:06.493Z] 🔎 [TWILIO WEBHOOK] existingLead: true
+[2026-02-18T03:31:06.493Z] 👤 [TWILIO WEBHOOK] Lead identified: 6d94d088-0da6-4902-897d-73c25fd344c5, Org: a2a11d33-9dee-478e-9a22-0f97401c5120
+[2026-02-18T03:31:06.493Z] 🔎 [TWILIO WEBHOOK] Looking for open conversation for lead: 6d94d088-0da6-4902-897d-73c25fd344c5
+[2026-02-18T03:31:06.622Z] ✅ [TWILIO WEBHOOK] Open conversation found: 29cd5d17-2693-4128-af49-8eb1b7fd9859
+[2026-02-18T03:31:06.622Z] 🏗️ [TWILIO WEBHOOK] Storing message in conversation: 29cd5d17-2693-4128-af49-8eb1b7fd9859
+[2026-02-18T03:31:06.789Z] ✅ [TWILIO WEBHOOK] Message stored: 4c6ad62d-7206-4748-bc6e-f59de939377a
+[2026-02-18T03:31:06.789Z] 🧠 [TWILIO WEBHOOK] Triggering AI Brain...
+[2026-02-18T03:31:06.804Z] 🧠 [BRAIN] Processing Lead: 6d94d088-0da6-4902-897d-73c25fd344c5, Msg: "Hola, busco apartamento en Limassol"
+[2026-02-18T03:31:06.910Z] 🧠 [BRAIN] Calling OpenAI...
+[2026-02-18T03:31:08.005Z] 🧠 [BRAIN] AI Response: {"reply_text":"reply_text","identified_property_id":null,"booking_intent":null}
+[2026-02-18T03:31:08.114Z] 🧠 [BRAIN] Sending reply to whatsapp:+19998887776: "reply_text"
+[2026-02-18T03:31:08.494Z] 🧠 [BRAIN] Reply sent via Twilio.
+[2026-02-18T03:31:08.494Z] ✅ [TWILIO WEBHOOK] Brain processing triggered.
+[2026-02-18T03:34:54.801Z] 🔌 [TWILIO WEBHOOK] Incoming request...
+[2026-02-18T03:34:54.804Z] 📦 [TWILIO WEBHOOK] Headers: {"accept":"*/*","content-length":"34","content-type":"application/x-www-form-urlencoded","forwarded":"for=83.168.20.99;proto=https","host":"e8daf8b4a0e08e.lhr.life","user-agent":"curl/8.7.1","x-forwarded-for":"83.168.20.99","x-forwarded-host":"e8daf8b4a0e08e.lhr.life","x-forwarded-port":"3000","x-forwarded-proto":"https"}
+[2026-02-18T03:34:54.811Z] 📦 [TWILIO WEBHOOK] formData received
+[2026-02-18T03:34:54.811Z] 📦 [TWILIO WEBHOOK] Form Data parsed: {"From":"whatsapp: 123456789","Body":"Ping"}
+[2026-02-18T03:34:54.824Z] 🔎 [TWILIO WEBHOOK] Checking for Agent: whatsapp: 123456789
+[2026-02-18T03:34:55.444Z] 🔎 [TWILIO WEBHOOK] Agent found? false
+[2026-02-18T03:34:55.445Z] 🔎 [TWILIO WEBHOOK] Looking for existing lead: whatsapp: 123456789
+[2026-02-18T03:34:55.661Z] 🔎 [TWILIO WEBHOOK] existingLead: false
+[2026-02-18T03:34:56.154Z] 👤 [TWILIO WEBHOOK] Lead identified: d26fbf13-26c2-43d7-b0db-ba996d94c2d8, Org: a2a11d33-9dee-478e-9a22-0f97401c5120
+[2026-02-18T03:34:56.155Z] 🔎 [TWILIO WEBHOOK] Looking for open conversation for lead: d26fbf13-26c2-43d7-b0db-ba996d94c2d8
+[2026-02-18T03:34:56.314Z] 🏗️ [TWILIO WEBHOOK] Creating new conversation...
+[2026-02-18T03:34:56.516Z] ✅ [TWILIO WEBHOOK] New conversation created: 757139b2-b943-4330-be26-25ad17e56d03
+[2026-02-18T03:34:56.517Z] 🏗️ [TWILIO WEBHOOK] Storing message in conversation: 757139b2-b943-4330-be26-25ad17e56d03
+[2026-02-18T03:34:56.646Z] ✅ [TWILIO WEBHOOK] Message stored: 34a27a66-2fa0-4175-8789-cb06b84fc598
+[2026-02-18T03:34:56.647Z] 🧠 [TWILIO WEBHOOK] Triggering AI Brain...
+[2026-02-18T03:34:56.648Z] 🧠 [BRAIN] Processing Lead: d26fbf13-26c2-43d7-b0db-ba996d94c2d8, Msg: "Ping"
+[2026-02-18T03:34:56.779Z] 🧠 [BRAIN] Calling OpenAI...
+[2026-02-18T03:34:58.045Z] 🧠 [BRAIN] AI Response: {"reply_text":"reply_text","identified_property_id":null,"booking_intent":null}
+[2026-02-18T03:34:58.177Z] 🧠 [BRAIN] Sending reply to whatsapp: 123456789: "reply_text"
+[2026-02-18T03:34:59.226Z] ✅ [TWILIO WEBHOOK] Brain processing triggered.
+[2026-02-18T03:36:10.569Z] 🔌 [TWILIO WEBHOOK] Incoming request...
+[2026-02-18T03:36:10.572Z] 📦 [TWILIO WEBHOOK] Headers: {"accept":"*/*","connection":"close","content-length":"553","content-type":"application/x-www-form-urlencoded","forwarded":"for=54.211.254.4;proto=https","host":"e8daf8b4a0e08e.lhr.life","i-twilio-idempotency-token":"9434bd25-c5b7-4d15-945e-ccce345cfef7","user-agent":"TwilioProxy/1.1","x-forwarded-for":"54.211.254.4","x-forwarded-host":"e8daf8b4a0e08e.lhr.life","x-forwarded-port":"3000","x-forwarded-proto":"https","x-home-region":"us1","x-twilio-signature":"/uK3/GYLnI9BV84FBTUzvSQvOW8="}
+[2026-02-18T03:36:10.576Z] 📦 [TWILIO WEBHOOK] formData received
+[2026-02-18T03:36:10.577Z] 📦 [TWILIO WEBHOOK] Form Data parsed: {"SmsMessageSid":"SM5d408a27bf11f5377a68dcc6ac48e2a6","NumMedia":"0","ProfileName":"Anas Bcf","MessageType":"text","SmsSid":"SM5d408a27bf11f5377a68dcc6ac48e2a6","WaId":"34617896422","SmsStatus":"received","Body":"Hola","To":"whatsapp:+14155238886","NumSegments":"1","ReferralNumMedia":"0","MessageSid":"SM5d408a27bf11f5377a68dcc6ac48e2a6","AccountSid":"AC02837320334109cf22802d08010c9102","ChannelMetadata":"{\"type\":\"whatsapp\",\"data\":{\"context\":{\"ProfileName\":\"Anas Bcf\",\"WaId\":\"34617896422\"}}}","From":"whatsapp:+34617896422","ApiVersion":"2010-04-01"}
+[2026-02-18T03:36:10.580Z] 🔎 [TWILIO WEBHOOK] Checking for Agent: whatsapp:+34617896422
+[2026-02-18T03:36:10.777Z] 🔎 [TWILIO WEBHOOK] Agent found? true
+[2026-02-18T03:37:33.368Z] 🔌 [TWILIO WEBHOOK] Incoming request...
+[2026-02-18T03:37:33.371Z] 📦 [TWILIO WEBHOOK] Headers: {"accept":"*/*","connection":"close","content-length":"553","content-type":"application/x-www-form-urlencoded","forwarded":"for=3.87.37.15;proto=https","host":"e8daf8b4a0e08e.lhr.life","i-twilio-idempotency-token":"2c2fa1e8-8250-4273-ba15-86b2a22a7293","user-agent":"TwilioProxy/1.1","x-forwarded-for":"3.87.37.15","x-forwarded-host":"e8daf8b4a0e08e.lhr.life","x-forwarded-port":"3000","x-forwarded-proto":"https","x-home-region":"us1","x-twilio-signature":"u02BvTYcKrDkUinXdIVHcwwtUzQ="}
+[2026-02-18T03:37:33.372Z] 📦 [TWILIO WEBHOOK] formData received
+[2026-02-18T03:37:33.372Z] 📦 [TWILIO WEBHOOK] Form Data parsed: {"SmsMessageSid":"SMb2a08f08adcf02269c1aff354b87184d","NumMedia":"0","ProfileName":"Anas Bcf","MessageType":"text","SmsSid":"SMb2a08f08adcf02269c1aff354b87184d","WaId":"34617896422","SmsStatus":"received","Body":"Hola","To":"whatsapp:+14155238886","NumSegments":"1","ReferralNumMedia":"0","MessageSid":"SMb2a08f08adcf02269c1aff354b87184d","AccountSid":"AC02837320334109cf22802d08010c9102","ChannelMetadata":"{\"type\":\"whatsapp\",\"data\":{\"context\":{\"ProfileName\":\"Anas Bcf\",\"WaId\":\"34617896422\"}}}","From":"whatsapp:+34617896422","ApiVersion":"2010-04-01"}
+[2026-02-18T03:37:33.373Z] 🔎 [TWILIO WEBHOOK] Checking for Agent: whatsapp:+34617896422
+[2026-02-18T03:37:33.795Z] 🔎 [TWILIO WEBHOOK] Agent found? false
+[2026-02-18T03:37:33.795Z] 🔎 [TWILIO WEBHOOK] Looking for existing lead: whatsapp:+34617896422
+[2026-02-18T03:37:34.076Z] 🔎 [TWILIO WEBHOOK] existingLead: false
+[2026-02-18T03:37:34.348Z] 👤 [TWILIO WEBHOOK] Lead identified: 953ddec8-bab3-4d52-bab1-30352840ae3a, Org: a2a11d33-9dee-478e-9a22-0f97401c5120
+[2026-02-18T03:37:34.348Z] 🔎 [TWILIO WEBHOOK] Looking for open conversation for lead: 953ddec8-bab3-4d52-bab1-30352840ae3a
+[2026-02-18T03:37:34.607Z] 🏗️ [TWILIO WEBHOOK] Creating new conversation...
+[2026-02-18T03:37:34.729Z] ✅ [TWILIO WEBHOOK] New conversation created: d1530089-b5d9-4b62-a7c6-fc91758b73a3
+[2026-02-18T03:37:34.729Z] 🏗️ [TWILIO WEBHOOK] Storing message in conversation: d1530089-b5d9-4b62-a7c6-fc91758b73a3
+[2026-02-18T03:37:34.842Z] ✅ [TWILIO WEBHOOK] Message stored: 4ac55649-79a6-4f5d-894b-cf63d5571d04
+[2026-02-18T03:37:34.842Z] 🧠 [TWILIO WEBHOOK] Triggering AI Brain...
+[2026-02-18T03:37:34.844Z] 🧠 [BRAIN] Processing Lead: 953ddec8-bab3-4d52-bab1-30352840ae3a, Msg: "Hola"
+[2026-02-18T03:37:35.128Z] 🧠 [BRAIN] Calling OpenAI...
+[2026-02-18T03:37:36.904Z] 🧠 [BRAIN] AI Response: {"reply_text":"reply_text","identified_property_id":null,"booking_intent":null}
+[2026-02-18T03:37:37.222Z] 🧠 [BRAIN] Sending reply to whatsapp:+34617896422: "reply_text"
+[2026-02-18T03:37:38.333Z] 🧠 [BRAIN] Reply sent via Twilio.
+[2026-02-18T03:37:38.333Z] ✅ [TWILIO WEBHOOK] Brain processing triggered.
+[2026-02-18T03:38:32.089Z] 🔌 [TWILIO WEBHOOK] Incoming request...
+[2026-02-18T03:38:32.091Z] 📦 [TWILIO WEBHOOK] Headers: {"accept":"*/*","accept-encoding":"gzip, deflate, br","connection":"keep-alive","content-length":"119","content-type":"application/x-www-form-urlencoded;charset=UTF-8","host":"localhost:3000","user-agent":"node-fetch","x-forwarded-for":"127.0.0.1","x-forwarded-host":"localhost:3000","x-forwarded-port":"3000","x-forwarded-proto":"http"}
+[2026-02-18T03:38:32.092Z] 📦 [TWILIO WEBHOOK] formData received
+[2026-02-18T03:38:32.092Z] 📦 [TWILIO WEBHOOK] Form Data parsed: {"From":"whatsapp:+19998887776","Body":"Hola, busco apartamento en Limassol","AccountSid":"AC02837320334109cf22802d08010c9102"}
+[2026-02-18T03:38:32.093Z] 🔎 [TWILIO WEBHOOK] Checking for Agent: whatsapp:+19998887776
+[2026-02-18T03:38:32.375Z] 🔎 [TWILIO WEBHOOK] Agent found? false
+[2026-02-18T03:38:32.375Z] 🔎 [TWILIO WEBHOOK] Looking for existing lead: whatsapp:+19998887776
+[2026-02-18T03:38:32.482Z] 🔎 [TWILIO WEBHOOK] existingLead: true
+[2026-02-18T03:38:32.483Z] 👤 [TWILIO WEBHOOK] Lead identified: 6d94d088-0da6-4902-897d-73c25fd344c5, Org: a2a11d33-9dee-478e-9a22-0f97401c5120
+[2026-02-18T03:38:32.483Z] 🔎 [TWILIO WEBHOOK] Looking for open conversation for lead: 6d94d088-0da6-4902-897d-73c25fd344c5
+[2026-02-18T03:38:32.615Z] ✅ [TWILIO WEBHOOK] Open conversation found: 29cd5d17-2693-4128-af49-8eb1b7fd9859
+[2026-02-18T03:38:32.615Z] 🏗️ [TWILIO WEBHOOK] Storing message in conversation: 29cd5d17-2693-4128-af49-8eb1b7fd9859
+[2026-02-18T03:38:32.791Z] ✅ [TWILIO WEBHOOK] Message stored: be79a31d-61d8-4c00-885b-e1cda47c422b
+[2026-02-18T03:38:32.791Z] 🧠 [TWILIO WEBHOOK] Triggering AI Brain...
+[2026-02-18T03:38:32.835Z] 🧠 [BRAIN] Processing Lead: 6d94d088-0da6-4902-897d-73c25fd344c5, Msg: "Hola, busco apartamento en Limassol"
+[2026-02-18T03:38:32.950Z] 🧠 [BRAIN] Calling OpenAI...
+[2026-02-18T03:38:33.988Z] 🧠 [BRAIN] AI Response: {"reply_text":"¡Hola! Bienvenido. ¿Qué características buscas en un apartamento en Limassol? ¿Tienes en mente un rango de precio o el número de habitaciones que prefieres?","identified_property_id":null,"booking_intent":null}
+[2026-02-18T03:38:34.101Z] 🧠 [BRAIN] Sending reply to whatsapp:+19998887776: "¡Hola! Bienvenido. ¿Qué características buscas en un apartamento en Limassol? ¿Tienes en mente un rango de precio o el número de habitaciones que prefieres?"
+[2026-02-18T03:38:34.907Z] 🧠 [BRAIN] Reply sent via Twilio.
+[2026-02-18T03:38:34.907Z] ✅ [TWILIO WEBHOOK] Brain processing triggered.
+[2026-02-18T03:41:56.922Z] 🔌 [TWILIO WEBHOOK] Incoming request...
+[2026-02-18T03:41:56.931Z] 📦 [TWILIO WEBHOOK] Headers: {"accept":"*/*","content-length":"34","content-type":"application/x-www-form-urlencoded","forwarded":"for=83.168.20.99;proto=https","host":"496703c1d027c2.lhr.life","user-agent":"curl/8.7.1","x-forwarded-for":"83.168.20.99","x-forwarded-host":"496703c1d027c2.lhr.life","x-forwarded-port":"3000","x-forwarded-proto":"https"}
+[2026-02-18T03:41:56.967Z] 📦 [TWILIO WEBHOOK] formData received
+[2026-02-18T03:41:56.967Z] 📦 [TWILIO WEBHOOK] Form Data parsed: {"From":"whatsapp: 123456789","Body":"Ping"}
+[2026-02-18T03:41:56.980Z] 🔎 [TWILIO WEBHOOK] Checking for Agent: whatsapp: 123456789
+[2026-02-18T03:41:57.390Z] 🔎 [TWILIO WEBHOOK] Agent found? false
+[2026-02-18T03:41:57.390Z] 🔎 [TWILIO WEBHOOK] Looking for existing lead: whatsapp: 123456789
+[2026-02-18T03:41:57.495Z] 🔎 [TWILIO WEBHOOK] existingLead: true
+[2026-02-18T03:41:57.495Z] 👤 [TWILIO WEBHOOK] Lead identified: d26fbf13-26c2-43d7-b0db-ba996d94c2d8, Org: a2a11d33-9dee-478e-9a22-0f97401c5120
+[2026-02-18T03:41:57.495Z] 🔎 [TWILIO WEBHOOK] Looking for open conversation for lead: d26fbf13-26c2-43d7-b0db-ba996d94c2d8
+[2026-02-18T03:41:57.625Z] ✅ [TWILIO WEBHOOK] Open conversation found: 757139b2-b943-4330-be26-25ad17e56d03
+[2026-02-18T03:41:57.626Z] 🏗️ [TWILIO WEBHOOK] Storing message in conversation: 757139b2-b943-4330-be26-25ad17e56d03
+[2026-02-18T03:41:57.783Z] ✅ [TWILIO WEBHOOK] Message stored: 63a3d11e-7e97-4aec-8201-886de0f5fe4e
+[2026-02-18T03:41:57.784Z] 🧠 [TWILIO WEBHOOK] Triggering AI Brain...
+[2026-02-18T03:41:57.786Z] 🧠 [BRAIN] Processing Lead: d26fbf13-26c2-43d7-b0db-ba996d94c2d8, Msg: "Ping"
+[2026-02-18T03:41:57.910Z] 🧠 [BRAIN] Calling OpenAI...
+[2026-02-18T03:42:00.357Z] 🧠 [BRAIN] AI Response: {"reply_text":"Hello! How can I assist you today? Are you looking for specific properties in Cyprus?","identified_property_id":null,"booking_intent":null}
+[2026-02-18T03:42:00.513Z] 🧠 [BRAIN] Sending reply to whatsapp: 123456789: "Hello! How can I assist you today? Are you looking for specific properties in Cyprus?"
+[2026-02-18T03:42:01.527Z] ✅ [TWILIO WEBHOOK] Brain processing triggered.
+[2026-02-18T03:44:40.036Z] 🔌 [TWILIO WEBHOOK] Incoming request...
+[2026-02-18T03:44:40.038Z] 📦 [TWILIO WEBHOOK] Headers: {"accept":"*/*","connection":"close","content-length":"553","content-type":"application/x-www-form-urlencoded","forwarded":"for=34.207.138.97;proto=https","host":"496703c1d027c2.lhr.life","i-twilio-idempotency-token":"8cb81696-0ffa-4218-b3a3-d58a81a4af1a","user-agent":"TwilioProxy/1.1","x-forwarded-for":"34.207.138.97","x-forwarded-host":"496703c1d027c2.lhr.life","x-forwarded-port":"3000","x-forwarded-proto":"https","x-home-region":"us1","x-twilio-signature":"LLGzhvMwMa+u1nUzgq/J5A7GWQA="}
+[2026-02-18T03:44:40.044Z] 📦 [TWILIO WEBHOOK] formData received
+[2026-02-18T03:44:40.047Z] 📦 [TWILIO WEBHOOK] Form Data parsed: {"SmsMessageSid":"SMc6f51825164457b5a61d8a62f0464b02","NumMedia":"0","ProfileName":"Anas Bcf","MessageType":"text","SmsSid":"SMc6f51825164457b5a61d8a62f0464b02","WaId":"34617896422","SmsStatus":"received","Body":"Hola","To":"whatsapp:+14155238886","NumSegments":"1","ReferralNumMedia":"0","MessageSid":"SMc6f51825164457b5a61d8a62f0464b02","AccountSid":"AC02837320334109cf22802d08010c9102","ChannelMetadata":"{\"type\":\"whatsapp\",\"data\":{\"context\":{\"ProfileName\":\"Anas Bcf\",\"WaId\":\"34617896422\"}}}","From":"whatsapp:+34617896422","ApiVersion":"2010-04-01"}
+[2026-02-18T03:44:40.059Z] 🔎 [TWILIO WEBHOOK] Checking for Agent: whatsapp:+34617896422
+[2026-02-18T03:44:40.485Z] 🔎 [TWILIO WEBHOOK] Agent found? false
+[2026-02-18T03:44:40.486Z] 🔎 [TWILIO WEBHOOK] Looking for existing lead: whatsapp:+34617896422
+[2026-02-18T03:44:40.616Z] 🔎 [TWILIO WEBHOOK] existingLead: true
+[2026-02-18T03:44:40.616Z] 👤 [TWILIO WEBHOOK] Lead identified: 953ddec8-bab3-4d52-bab1-30352840ae3a, Org: a2a11d33-9dee-478e-9a22-0f97401c5120
+[2026-02-18T03:44:40.616Z] 🔎 [TWILIO WEBHOOK] Looking for open conversation for lead: 953ddec8-bab3-4d52-bab1-30352840ae3a
+[2026-02-18T03:44:40.842Z] ✅ [TWILIO WEBHOOK] Open conversation found: d1530089-b5d9-4b62-a7c6-fc91758b73a3
+[2026-02-18T03:44:40.855Z] 🏗️ [TWILIO WEBHOOK] Storing message in conversation: d1530089-b5d9-4b62-a7c6-fc91758b73a3
+[2026-02-18T03:44:40.986Z] ✅ [TWILIO WEBHOOK] Message stored: 355aee37-d853-4e1d-bf99-09a5167c7af5
+[2026-02-18T03:44:41.000Z] 🧠 [TWILIO WEBHOOK] Triggering AI Brain...
+[2026-02-18T03:44:41.003Z] 🧠 [BRAIN] Processing Lead: 953ddec8-bab3-4d52-bab1-30352840ae3a, Msg: "Hola"
+[2026-02-18T03:44:41.159Z] 🧠 [BRAIN] Calling OpenAI...
+[2026-02-18T03:44:43.522Z] 🧠 [BRAIN] AI Response: {"reply_text":"¡Hola! Bienvenido. ¿Qué estás buscando en Chipre? Estoy aquí para ayudarte.","identified_property_id":null,"booking_intent":null}
+[2026-02-18T03:44:43.636Z] 🧠 [BRAIN] Sending reply to whatsapp:+34617896422: "¡Hola! Bienvenido. ¿Qué estás buscando en Chipre? Estoy aquí para ayudarte."
+[2026-02-18T03:44:44.621Z] 🧠 [BRAIN] Reply sent via Twilio.
+[2026-02-18T03:44:44.621Z] ✅ [TWILIO WEBHOOK] Brain processing triggered.
