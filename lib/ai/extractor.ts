@@ -7,24 +7,44 @@ const openai = new OpenAI({
 });
 
 const PropertySchema = z.object({
-    property_type: z.enum(['Apartment', 'Villa', 'House', 'Plot', 'Commercial', 'Other']).describe("The type of property."),
+    // Core
+    property_use: z.enum(['Sale', 'Rent', 'Investment', 'Unknown']).describe("Purpose of the property listing."),
+    property_type: z.enum(['Apartment', 'Studio', 'Penthouse', 'House', 'Villa', 'Townhouse', 'Plot', 'Commercial', 'Office', 'Other']).describe("The detailed category of the property."),
     condition: z.enum(['New', 'Resale', 'Under Construction', 'Unknown']).describe("The condition or status of the build."),
+
+    // Financials
     price_value: z.number().describe("The numeric value of the price."),
     currency: z.string().describe("The currency code, e.g., EUR."),
-    vat_applicable: z.boolean().nullable().describe("True if the price is subject to VAT (usually new builds). False if VAT is fully included or not applicable (resales)."),
+    vat_applicable: z.boolean().nullable().describe("True if the price is subject to VAT (usually new builds)."),
     vat_type: z.enum(['19%', '5%', '0%']).nullable().describe("The type of VAT applicable, if any."),
+
+    // Location
     location_area: z.string().describe("The location or area of the property, e.g., 'Limassol - Marina'."),
-    lat: z.number().nullable().describe("Latitude coordinate if found or inferable."),
-    lng: z.number().nullable().describe("Longitude coordinate if found or inferable."),
-    bedrooms: z.number().nullable().describe("Number of bedrooms."),
-    bathrooms: z.number().nullable().describe("Number of bathrooms."),
-    covered_area_sqm: z.number().nullable().describe("Covered area in square meters."),
-    plot_size_sqm: z.number().nullable().describe("Plot size in square meters, if applicable."),
+    distance_to_sea_m: z.number().nullable().describe("Distance to the sea in meters, if specified."),
+    views: z.array(z.string()).describe("Views mentioned (e.g., 'Sea', 'Mountains', 'City', 'Pool')."),
+    lat: z.number().nullable(),
+    lng: z.number().nullable(),
+
+    // Spaces & Age
+    bedrooms: z.number().nullable(),
+    bathrooms: z.number().nullable(),
+    covered_area_sqm: z.number().nullable(),
+    plot_size_sqm: z.number().nullable(),
+    year_of_construction: z.number().nullable().describe("Year the property was built."),
+
+    // Detailed Features
     title_deeds: z.boolean().nullable().describe("Whether title deeds are mentioned or available."),
-    amenities: z.array(z.string()).describe("A list of amenities (e.g., 'Pool', 'Covered Parking', 'Sea View', 'Furnished')."),
+    furnishing: z.enum(['Fully Furnished', 'Semi-Furnished', 'Unfurnished', 'Unknown']).describe("Furnishing status."),
+    heating: z.string().nullable().describe("Heating details (e.g. 'Underfloor', 'Central', 'None')."),
+    air_conditioning: z.string().nullable().describe("AC details (e.g. 'VRV', 'Split Units', 'None')."),
+    pool: z.string().nullable().describe("Pool details (e.g. 'Private', 'Communal', 'None')."),
+
+    amenities: z.array(z.string()).describe("Other tags (e.g., 'Gated complex', 'Gym', 'Sauna', 'Smart Home', 'Elevator', 'Covered Parking')."),
+
+    // Content
     description_short: z.string().describe("A short summary description of the property."),
     internal_notes: z.string().nullable().describe("Any hidden or agent-specific notes found (optional)."),
-    images_urls: z.array(z.string()).describe("A list of image URLs (extract as many high quality property photos as possible, ignore logos)."),
+    images_urls: z.array(z.string()).describe("A list of high quality property image URLs. Ignore logos/icons."),
 });
 
 export type PropertyData = z.infer<typeof PropertySchema>;
@@ -32,20 +52,28 @@ export type PropertyData = z.infer<typeof PropertySchema>;
 export async function extractPropertyData(htmlContent: string): Promise<PropertyData | null> {
     try {
         const jsonSchema = JSON.stringify({
-            property_type: "Apartment | Villa | House | Plot | Commercial | Other",
+            property_use: "Sale | Rent | Investment | Unknown",
+            property_type: "Apartment | Studio | Penthouse | House | Villa | Townhouse | Plot | Commercial | Office | Other",
             condition: "New | Resale | Under Construction | Unknown",
             price_value: "number",
             currency: "string (EUR)",
             vat_applicable: "boolean | null",
             vat_type: "19% | 5% | 0% | null",
             location_area: "string",
+            distance_to_sea_m: "number | null",
+            views: ["string"],
             lat: "number | null",
             lng: "number | null",
             bedrooms: "number | null",
             bathrooms: "number | null",
             covered_area_sqm: "number | null",
             plot_size_sqm: "number | null",
+            year_of_construction: "number | null",
             title_deeds: "boolean | null",
+            furnishing: "Fully Furnished | Semi-Furnished | Unfurnished | Unknown",
+            heating: "string | null",
+            air_conditioning: "string | null",
+            pool: "string | null",
             amenities: ["string"],
             description_short: "string",
             internal_notes: "string | null",

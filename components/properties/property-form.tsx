@@ -26,6 +26,7 @@ interface PropertyFormProps {
 }
 
 const DEFAULT_DATA: PropertyData = {
+    property_use: "Sale",
     property_type: "Apartment",
     condition: "Resale",
     price_value: 0,
@@ -33,12 +34,21 @@ const DEFAULT_DATA: PropertyData = {
     vat_applicable: false,
     vat_type: null,
     location_area: "",
+    distance_to_sea_m: null,
+    views: [],
     lat: null,
     lng: null,
+    year_of_construction: null,
     bedrooms: null,
     bathrooms: null,
     covered_area_sqm: null,
     plot_size_sqm: null,
+    title_deeds: false,
+    furnishing: "Unknown",
+    heating: null,
+    air_conditioning: null,
+    pool: null,
+    amenities: [],
     title_deeds: false,
     amenities: [],
     description_short: "",
@@ -99,6 +109,7 @@ export function PropertyForm({ agents = [], initialData, initialStatus, initialA
                 ...result.data,
                 // Ensure array fields don't accidentally become null
                 amenities: result.data.amenities || prev.amenities,
+                views: result.data.views || prev.views,
                 images_urls: result.data.images_urls || prev.images_urls
             }));
 
@@ -199,7 +210,24 @@ export function PropertyForm({ agents = [], initialData, initialStatus, initialA
                                     </SelectContent>
                                 </Select>
                             </div>
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-3 gap-4">
+                                <div className="space-y-2">
+                                    <Label>Property Use</Label>
+                                    <Select
+                                        value={formData.property_use}
+                                        onValueChange={(val) => handleChange("property_use", val)}
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select purpose" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="Sale">Sale</SelectItem>
+                                            <SelectItem value="Rent">Rent</SelectItem>
+                                            <SelectItem value="Investment">Investment</SelectItem>
+                                            <SelectItem value="Unknown">Unknown</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
                                 <div className="space-y-2">
                                     <Label>Property Type</Label>
                                     <Select
@@ -211,10 +239,14 @@ export function PropertyForm({ agents = [], initialData, initialStatus, initialA
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="Apartment">Apartment</SelectItem>
-                                            <SelectItem value="Villa">Villa</SelectItem>
+                                            <SelectItem value="Studio">Studio</SelectItem>
+                                            <SelectItem value="Penthouse">Penthouse</SelectItem>
                                             <SelectItem value="House">House</SelectItem>
+                                            <SelectItem value="Villa">Villa</SelectItem>
+                                            <SelectItem value="Townhouse">Townhouse</SelectItem>
                                             <SelectItem value="Plot">Plot</SelectItem>
                                             <SelectItem value="Commercial">Commercial</SelectItem>
+                                            <SelectItem value="Office">Office</SelectItem>
                                             <SelectItem value="Other">Other</SelectItem>
                                         </SelectContent>
                                     </Select>
@@ -231,23 +263,34 @@ export function PropertyForm({ agents = [], initialData, initialStatus, initialA
                                         <SelectContent>
                                             <SelectItem value="New">New</SelectItem>
                                             <SelectItem value="Resale">Resale</SelectItem>
-                                            <SelectItem value="Under Construction">Under Construction</SelectItem>
+                                            <SelectItem value="Under Construction">Under Constr.</SelectItem>
                                             <SelectItem value="Unknown">Unknown</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>
                             </div>
 
-                            <div className="space-y-2">
-                                <Label>Location Area</Label>
-                                <Input
-                                    value={formData.location_area || ""}
-                                    onChange={(e) => handleChange("location_area", e.target.value)}
-                                    placeholder="e.g. Limassol - Marina"
-                                />
+                            <div className="grid grid-cols-3 gap-4">
+                                <div className="col-span-2 space-y-2">
+                                    <Label>Location Area</Label>
+                                    <Input
+                                        value={formData.location_area || ""}
+                                        onChange={(e) => handleChange("location_area", e.target.value)}
+                                        placeholder="e.g. Limassol - Marina"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>Distance to Sea (m)</Label>
+                                    <Input
+                                        type="number"
+                                        value={formData.distance_to_sea_m || ""}
+                                        onChange={(e) => handleChange("distance_to_sea_m", parseInt(e.target.value) || null)}
+                                        placeholder="e.g. 500"
+                                    />
+                                </div>
                             </div>
 
-                            <div className="grid grid-cols-3 gap-4">
+                            <div className="grid grid-cols-4 gap-4">
                                 <div className="space-y-2">
                                     <Label>Bedrooms</Label>
                                     <Input
@@ -265,11 +308,49 @@ export function PropertyForm({ agents = [], initialData, initialStatus, initialA
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Covered Area (sqm)</Label>
+                                    <Label>Year Built</Label>
+                                    <Input
+                                        type="number"
+                                        value={formData.year_of_construction || ""}
+                                        onChange={(e) => handleChange("year_of_construction", parseInt(e.target.value) || null)}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>Area (m²)</Label>
                                     <Input
                                         type="number"
                                         value={formData.covered_area_sqm || ""}
                                         onChange={(e) => handleChange("covered_area_sqm", parseInt(e.target.value) || null)}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label>Furnishing</Label>
+                                    <Select
+                                        value={formData.furnishing}
+                                        onValueChange={(val) => handleChange("furnishing", val)}
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Furnishing status" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="Fully Furnished">Fully Furnished</SelectItem>
+                                            <SelectItem value="Semi-Furnished">Semi-Furnished</SelectItem>
+                                            <SelectItem value="Unfurnished">Unfurnished</SelectItem>
+                                            <SelectItem value="Unknown">Unknown</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>Amenities Extracted (Tags)</Label>
+                                    <Input
+                                        value={formData.amenities.join(', ')}
+                                        readOnly
+                                        className="bg-slate-50 text-slate-500 cursor-not-allowed text-sm"
+                                        placeholder="e.g. Pool, Gym, Sauna"
+                                        title={formData.amenities.join(', ')}
                                     />
                                 </div>
                             </div>
