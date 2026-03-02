@@ -12,10 +12,21 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'URL is required' }, { status: 400 });
         }
 
-        // 1. Scrape the HTML (Disabled to prevent Vercel 50MB Limit Exceeded Error)
-        console.log(`Scraping URL: ${url}`);
-        // const html = await scrapePropertyUrl(url);
-        const html = "<html><body>Property Data Scrape Disabled In Production</body></html>";
+        // 1. Scrape the HTML via the external Cloud Run Worker
+        console.log(`Scraping URL via Cloud Run Worker: ${url}`);
+        const workerResponse = await fetch('https://ktimatos-scraper-807900232533.europe-west1.run.app/scrape', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url: url, secret: 'NODEX2025' })
+        });
+
+        if (!workerResponse.ok) {
+            console.error("Worker Response Error:", await workerResponse.text());
+            return NextResponse.json({ error: 'Failed to retrieve content from Worker' }, { status: 500 });
+        }
+
+        const workerData = await workerResponse.json();
+        const html = workerData.html;
 
         if (!html) {
             return NextResponse.json({ error: 'Failed to retrieve content from URL' }, { status: 500 });
