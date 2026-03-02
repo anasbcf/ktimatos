@@ -1,6 +1,6 @@
 
 import { NextRequest, NextResponse } from 'next/server';
-import { scrapePropertyUrl } from '@/lib/scraper/engine';
+// import { scrapePropertyUrl } from '@/lib/scraper/engine';
 import { extractPropertyData } from '@/lib/ai/extractor';
 import { createClient } from '@/lib/supabase/server';
 
@@ -12,9 +12,10 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'URL is required' }, { status: 400 });
         }
 
-        // 1. Scrape the HTML
+        // 1. Scrape the HTML (Disabled to prevent Vercel 50MB Limit Exceeded Error)
         console.log(`Scraping URL: ${url}`);
-        const html = await scrapePropertyUrl(url);
+        // const html = await scrapePropertyUrl(url);
+        const html = "<html><body>Property Data Scrape Disabled In Production</body></html>";
 
         if (!html) {
             return NextResponse.json({ error: 'Failed to retrieve content from URL' }, { status: 500 });
