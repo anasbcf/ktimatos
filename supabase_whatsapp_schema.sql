@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS public.whatsapp_messages (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     conversation_id UUID NOT NULL REFERENCES public.whatsapp_conversations(id) ON DELETE CASCADE,
     sender_type sender_role NOT NULL,
+    agent_id TEXT REFERENCES public.profiles(id),
     content TEXT NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
