@@ -3,12 +3,17 @@ import { waitUntil } from '@vercel/functions';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { invokeBrain1 } from '@/lib/ai/brain1_concierge';
 import { invokeBrain2 } from '@/lib/ai/brain2_executive';
+import { Client as QStashClient } from '@upstash/qstash';
+
+// Initialize Message Queue Client
+const qstash = new QStashClient({ token: (process.env.QSTASH_TOKEN || 'placeholder').trim() });
+const WORKER_URL = (process.env.WORKER_URL || 'https://change-me.a.run.app/api/process-whatsapp').trim();
 
 // Aumentamos el límite de ejecución (Hobby -> max 60s, Pro -> max 300s) para procesos de IA asíncronos en Vercel Serverless
 export const maxDuration = 60;
 
 // WhatsApp Verification Secret
-const WHATSAPP_VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN || process.env.META_WEBHOOK_VERIFY_TOKEN;
+const WHATSAPP_VERIFY_TOKEN = (process.env.WHATSAPP_VERIFY_TOKEN || process.env.META_WEBHOOK_VERIFY_TOKEN)?.trim();
 
 // GET: Verificación requerida por Meta (WhatsApp Cloud API) al configurar el Webhook
 export async function GET(req: Request) {
@@ -120,11 +125,16 @@ export async function POST(req: Request) {
             if (messageType === 'audio') {
                 await sendWhatsAppReceipt(senderPhone, "⏳ Escuchando tu nota de voz...");
             } else {
-                await sendWhatsAppReceipt(senderPhone, "⏳ Procesando tu orden en el CRM...");
+                await sendWhatsAppReceipt(senderPhone, "⏳ Despachando tarea a la cola...");
             }
 
-            waitUntil(invokeBrain2(senderPhone, content, audioId, agentProfile).catch(e => console.error(e)));
-            return NextResponse.json({ success: true, route: 'brain_2_executive' }, { status: 200 });
+            // OFF-LOADING TO QSTASH WORKER
+            waitUntil(qstash.publishJSON({
+                url: WORKER_URL,
+                body: { senderPhone, content, audioId, agentProfile, routeType: 'brain_2_executive' }
+            }).catch(e => console.error('[QStash Error]:', e)));
+
+            return NextResponse.json({ success: true, route: 'brain_2_executive_queued' }, { status: 200 });
         }
 
         // B. Contexto Concierge (Lead): Manejo de Memoria
@@ -195,10 +205,13 @@ export async function POST(req: Request) {
             return NextResponse.json({ success: true, route: 'human_handled' }, { status: 200 });
         }
 
-        // Invocación asíncrona de Brain 1 protegida por el Serverless Watchdog de Vercel
-        waitUntil(invokeBrain1(senderPhone, content, leadProfile).catch(console.error));
+        // Invocación asíncrona de la cola QStash (Cloud Run Worker)
+        waitUntil(qstash.publishJSON({
+            url: WORKER_URL,
+            body: { senderPhone, content, leadProfile, routeType: 'brain_1_concierge' }
+        }).catch(e => console.error('[QStash Error]:', e)));
 
-        return NextResponse.json({ success: true, route: 'brain_1_concierge' }, { status: 200 });
+        return NextResponse.json({ success: true, route: 'brain_1_concierge_queued' }, { status: 200 });
 
     } catch (error: any) {
         console.error('[WhatsApp Router Fatal Error]:', error.message || error);
