@@ -26,48 +26,78 @@ export async function GET(req: Request) {
     }
 }
 
-// POST: Recepción de Mensajes (Router Cognitivo RBAC)
+// POST: Recepción de Mensajes con Robustez Nivel CTO y Memoria (Frente B)
 export async function POST(req: Request) {
     try {
         const body = await req.json();
 
         // 1. Verificamos que es un evento válido de WhatsApp
         if (body.object !== 'whatsapp_business_account') {
-            return NextResponse.json({ error: 'Not a WhatsApp event' }, { status: 404 });
+            // No devolvemos 404 a Meta para evitar pings fallidos recurrentes. Devolvemos 200 y la ignoramos.
+            return NextResponse.json({ success: true, message: 'Not a WhatsApp event' }, { status: 200 });
         }
 
-        // 2. Parseo defensivo del payload anidado de Meta
+        // 2. Parseo defensivo Extremo (Optional Chaining) del payload de Meta
         const entry = body.entry?.[0];
         const changes = entry?.changes?.[0];
         const value = changes?.value;
-        const messages = value?.messages;
 
-        // Meta envía actualizaciones de estado (read/delivered) por este mismo webhook. 
-        // Si no hay array de 'messages', es un status update y lo ignoramos por ahora.
-        if (!messages || messages.length === 0) {
-            return NextResponse.json({ success: true, message: 'Status update ignored' });
+        // 3. Filtro CTO: Abortar si es una actualización de estado (sent, delivered, read)
+        if (value?.statuses && value.statuses.length > 0) {
+            console.log(`[Meta Webhook] Status update received (${value.statuses[0].status}). Ignored.`);
+            return NextResponse.json({ success: true, message: 'Status update ignored' }, { status: 200 });
+        }
+
+        const messages = value?.messages;
+        const metadata = value?.metadata;
+
+        if (!messages || messages.length === 0 || !metadata) {
+            return NextResponse.json({ success: true, message: 'No messages to process' }, { status: 200 });
         }
 
         const message = messages[0];
-        const senderPhone = message.from; // WhatsApp lo envía como string numérico puro (ej: "34600123456")
-        const messageType = message.type;
+        const senderPhone = message.from;
+        const receiverNumber = metadata.display_phone_number;
+        const messageType = message?.type;
 
-        // Extracción de contenido base (soporta audios para transcripción futura)
+        // Extraer contenido de forma segura
         let content = '';
         if (messageType === 'text') {
-            content = message.text.body;
+            content = message?.text?.body || '';
         } else if (messageType === 'audio') {
-            content = `[Voice Message Received - Audio ID: ${message.audio.id}]`;
+            content = `[Voice Message Received - Audio ID: ${message?.audio?.id}]`;
         } else {
-            content = `[Unsupported message type: ${messageType}]`;
+            console.log(`[Meta Webhook] Received unsupported message type: ${messageType}. Ignored.`);
+            return NextResponse.json({ success: true, message: `Ignored unsupported media type: ${messageType}` }, { status: 200 });
         }
 
-        console.log(`[Cognitive Router] Incoming message from ${senderPhone}: ${content.substring(0, 50)}...`);
+        console.log(`[Cognitive Router] Incoming message from ${senderPhone} to ${receiverNumber}: ${content.substring(0, 50)}...`);
 
         const supabase = createAdminClient();
 
+        // 4. Identificar el Tenant (Org ID) usando el receiverNumber (meta_waba_id o whatsapp_business_number)
+        const cleanReceiverNum = receiverNumber?.replace(/\+/g, '').replace(/\D/g, '');
+        if (!cleanReceiverNum) {
+            console.error('[WhatsApp Router] Cannot resolve Multi-Tenant route. No valid display_phone_number.');
+            return NextResponse.json({ success: true, message: 'Invalid display_phone_number' }, { status: 200 });
+        }
+
+        const { data: tenantOrg } = await supabase
+            .from('organizations')
+            .select('id')
+            .or(`meta_waba_id.eq.${cleanReceiverNum},whatsapp_business_number.eq.${cleanReceiverNum}`)
+            .limit(1)
+            .single();
+
+        if (!tenantOrg) {
+            console.error(`[WhatsApp Router] ❌ Multi-Tenant Hit Miss: El número receptor ${cleanReceiverNum} no pertenece a ninguna inmobiliaria activa.`);
+            return NextResponse.json({ success: true, message: 'Agency not found' }, { status: 200 });
+        }
+
+        const activeOrgId = tenantOrg.id;
+
         // ==========================================
-        // CAPA DE ROUTING (Cognitive RBAC)
+        // CAPA DE ROUTING (Cognitive RBAC) Y MEMORIA (Frente B)
         // ==========================================
 
         // A. Buscamos en el Cerebro Ejecutivo (Internos / Agentes)
@@ -75,89 +105,100 @@ export async function POST(req: Request) {
             .from('profiles')
             .select('role, id, full_name, org_id')
             .eq('whatsapp_number', senderPhone)
+            .eq('org_id', activeOrgId) // Estricto: El agente pertenece a este Tenant
             .single();
 
         if (agentProfile) {
-            console.log(`[WhatsApp Router] Agent detected (${agentProfile.role}): Despertando Cerebro 2 (Executive) preparado para U.C. 2.X`);
-
-            // Extraer el audioId si el agente grabó una nota de voz para actualizar el CRM
+            console.log(`[WhatsApp Router] Agent detected (${agentProfile.role}): Executing Brain 2`);
             const audioId = messageType === 'audio' ? message.audio?.id : null;
 
-            // UX: Acuse de recibo instantáneo para audios lentos
             if (messageType === 'audio') {
                 await sendWhatsAppReceipt(senderPhone, "⏳ Escuchando tu nota de voz...");
             } else {
                 await sendWhatsAppReceipt(senderPhone, "⏳ Procesando tu orden en el CRM...");
             }
 
-            // Invocamos el cerebro de forma asíncrona para despachar a Meta al instante
             invokeBrain2(senderPhone, content, audioId, agentProfile).catch(e => console.error(e));
-
-            return NextResponse.json({ success: true, route: 'brain_2_executive' });
+            return NextResponse.json({ success: true, route: 'brain_2_executive' }, { status: 200 });
         }
 
-        // B. Buscamos en el Cerebro Conserje (Clientes / Inquilinos / Leads)
-        const { data: leadProfile } = await supabase
+        // B. Contexto Concierge (Lead): Manejo de Memoria
+        // Buscamos o creamos el perfil del Lead en este Tenant
+        let { data: leadProfile } = await supabase
             .from('leads')
             .select('id, name, org_id')
             .eq('phone', senderPhone)
+            .eq('org_id', activeOrgId)
             .single();
 
-        if (leadProfile) {
-            console.log(`[WhatsApp Router] Client detected (Existing): Despertando Cerebro 1 (Concierge) preparado para U.C. 1.X`);
-
-            // UX: Acuse de recibo para latencia de Gemini
-            await sendWhatsAppReceipt(senderPhone, "⏳ Permíteme revisar eso en el sistema...");
-
-            // Aquí inyectaremos la llamada LLM con funciones de Concierge (Agendar opt-in, buscar propiedades)
-            invokeBrain1(senderPhone, content, leadProfile).catch(console.error);
-
-            return NextResponse.json({ success: true, route: 'brain_1_concierge' });
-        }
-
-        // C. Cliente Frío No Reconocido (Nuevo Lead)
-        console.log(`[WhatsApp Router] Client detected (New): Insertando Lead y Despertando Cerebro 1 (Concierge)`);
-
-        // Extraemos 'receiverNumber' (el número de la Inmobiliaria al que ha escrito el cliente)
-        const receiverNumber = value.metadata?.display_phone_number;
-        console.log(`[Internal] Line receiving: ${receiverNumber}. Obteniendo el Tenant Org_ID...`);
-
-        if (!receiverNumber) {
-            console.error('[WhatsApp Router] Cannot resolve Multi-Tenant route. No display_phone_number found.');
-            return NextResponse.json({ success: false, message: 'Unroutable inbound logic.' }, { status: 400 });
-        }
-
-        // Buscamos la Agencia que posee ese número para que el webhook sepa de quién es el Lead
-        const cleanReceiverNum = receiverNumber.replace(/\+/g, ''); // Limpieza defensiva
-        const { data: tenantOrg } = await supabase
-            .from('organizations')
-            .select('id')
-            .eq('whatsapp_business_number', cleanReceiverNum)
-            .single();
-
-        if (!tenantOrg) {
-            console.error(`[WhatsApp Router] ❌ Multi-Tenant Hit Miss: El número ${cleanReceiverNum} no pertenece a ninguna inmobiliaria activa en KtimatOS.`);
-            return NextResponse.json({ success: false, message: 'Line not assigned to any agency.' });
-        }
-
-        try {
-            const { data: newLead } = await supabase.from('leads').insert({
+        if (!leadProfile) {
+            console.log(`[WhatsApp Router] New Lead detected: Inserting Lead for Org ${activeOrgId}`);
+            const { data: newLead, error: insertErr } = await supabase.from('leads').insert({
                 phone: senderPhone,
                 source: 'whatsapp',
-                org_id: tenantOrg.id // Multi-Tenant Dynamic Mapping ✅
+                org_id: activeOrgId
             }).select().single();
 
-            invokeBrain1(senderPhone, content, newLead || { phone: senderPhone }).catch(console.error);
-        } catch (insertErr) {
-            console.error('[WhatsApp Router] Failed to insert new lead. Waking brain with null profile.', insertErr);
-            invokeBrain1(senderPhone, content, { id: null, phone: senderPhone }).catch(console.error);
+            if (insertErr) {
+                console.error('[WhatsApp Router] Failed to insert new lead', insertErr);
+            }
+            leadProfile = newLead || { id: null, phone: senderPhone, org_id: activeOrgId };
+        } else {
+            console.log(`[WhatsApp Router] Existing Lead detected. Waking Brain 1.`);
         }
 
-        return NextResponse.json({ success: true, route: 'brain_1_concierge_new' });
+        // MEMORIA (Fase 1 de Frente B): Actualizar Conversations y Messages
+        let { data: conversation } = await supabase
+            .from('conversations')
+            .select('id, status')
+            .eq('org_id', activeOrgId)
+            .eq('lead_phone', senderPhone)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .single();
+
+        // Si no hay coversacion activa, creamos una
+        if (!conversation || conversation.status === 'closed') {
+            const { data: newConv, error: convErr } = await supabase
+                .from('conversations')
+                .insert({
+                    org_id: activeOrgId,
+                    lead_phone: senderPhone,
+                    status: 'ai_active'
+                })
+                .select('id')
+                .single();
+            if (!convErr && newConv) {
+                conversation = { id: newConv.id, status: 'ai_active' };
+            }
+        }
+
+        // Logueamos el mensaje del cliente en la BBDD
+        if (conversation) {
+            await supabase.from('messages').insert({
+                conversation_id: conversation.id,
+                sender_type: 'lead',
+                content: content
+            });
+            console.log(`[WhatsApp Router] Logged customer message to conversation ${conversation.id}`);
+        }
+
+        // Si el estado es human_intervened, NO invocamos a la IA a menos que queramos
+        if (conversation?.status === 'human_intervened') {
+            console.log(`[WhatsApp Router] Conversation is handled by a HUMAN. Brain 1 muted.`);
+            // You can optionally send a webhook/notification to the dashboard here so the broker knows they got a reply
+            return NextResponse.json({ success: true, route: 'human_handled' }, { status: 200 });
+        }
+
+        // Invocación asíncrona de Brain 1
+        invokeBrain1(senderPhone, content, leadProfile).catch(console.error);
+
+        return NextResponse.json({ success: true, route: 'brain_1_concierge' }, { status: 200 });
 
     } catch (error: any) {
-        console.error('[WhatsApp Router Error]:', error.message || error);
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+        console.error('[WhatsApp Router Fatal Error]:', error.message || error);
+        // Meta EXPECTS strictly 200 OK. Returning 500 triggers aggressive retries and IP blocks.
+        return NextResponse.json({ success: false, error: 'Internal Server Error logged' }, { status: 200 });
     }
 }
 

@@ -84,7 +84,7 @@ However, we've seen that the average real estate agency in Cyprus takes over 3 h
 
 We built KtimatOS so your AI handles that initial friction. It answers questions, qualifies the lead, and books viewings for you autonomously, eliminating the manual WhatsApp chase.
 
-I'd love to show you exactly how this deploys in 3 clicks. Book a slot in the next few days here and I'll show you a live demo:
+I'd love to show you exactly how this looks like. Book a slot in the next few days here and I'll show you a live demo:
 **[ Calendar Link ]**
 
 See you then,
