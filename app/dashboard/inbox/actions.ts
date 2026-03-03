@@ -28,15 +28,15 @@ export async function getConversationsAction() {
     // Fetch all leads for this org to resolve names
     const { data: leads, error: leadErr } = await supabase
         .from('leads')
-        .select('phone, name, first_name, last_name')
+        .select('phone, name')
         .eq('org_id', activeOrgId);
 
     if (leadErr) throw leadErr;
 
     const leadsMap = new Map();
     leads?.forEach((l: any) => {
-        // Fallback name logic if name isn't directly available or exists as first_name/last_name.
-        const fullName = l.name || [l.first_name, l.last_name].filter(Boolean).join(" ") || "Unknown Lead";
+        // Fallback name logic if name isn't directly available.
+        const fullName = l.name || "Unknown Lead";
         leadsMap.set(l.phone, fullName);
     });
 
