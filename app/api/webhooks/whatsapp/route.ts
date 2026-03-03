@@ -1,9 +1,14 @@
 import { NextResponse } from 'next/server';
+import { waitUntil } from '@vercel/functions';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { invokeBrain1 } from '@/lib/ai/brain1_concierge';
 import { invokeBrain2 } from '@/lib/ai/brain2_executive';
+
+// Aumentamos el límite de ejecución (Hobby -> max 60s, Pro -> max 300s) para procesos de IA asíncronos en Vercel Serverless
+export const maxDuration = 60;
+
 // WhatsApp Verification Secret
-const WHATSAPP_VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN;
+const WHATSAPP_VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN || process.env.META_WEBHOOK_VERIFY_TOKEN;
 
 // GET: Verificación requerida por Meta (WhatsApp Cloud API) al configurar el Webhook
 export async function GET(req: Request) {
@@ -118,7 +123,7 @@ export async function POST(req: Request) {
                 await sendWhatsAppReceipt(senderPhone, "⏳ Procesando tu orden en el CRM...");
             }
 
-            invokeBrain2(senderPhone, content, audioId, agentProfile).catch(e => console.error(e));
+            waitUntil(invokeBrain2(senderPhone, content, audioId, agentProfile).catch(e => console.error(e)));
             return NextResponse.json({ success: true, route: 'brain_2_executive' }, { status: 200 });
         }
 
@@ -190,8 +195,8 @@ export async function POST(req: Request) {
             return NextResponse.json({ success: true, route: 'human_handled' }, { status: 200 });
         }
 
-        // Invocación asíncrona de Brain 1
-        invokeBrain1(senderPhone, content, leadProfile).catch(console.error);
+        // Invocación asíncrona de Brain 1 protegida por el Serverless Watchdog de Vercel
+        waitUntil(invokeBrain1(senderPhone, content, leadProfile).catch(console.error));
 
         return NextResponse.json({ success: true, route: 'brain_1_concierge' }, { status: 200 });
 
