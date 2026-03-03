@@ -1,6 +1,6 @@
 
 import * as React from "react"
-import { GalleryVerticalEnd, SquareTerminal, Users, Building2, LayoutDashboard, Settings } from "lucide-react"
+import { GalleryVerticalEnd, SquareTerminal, Users, Building2, LayoutDashboard, Settings, Inbox } from "lucide-react"
 
 import {
     Sidebar,
@@ -73,6 +73,14 @@ export function AppSidebar({ isAdmin, ...props }: React.ComponentProps<typeof Si
                                         <a href="/dashboard/properties">
                                             <Building2 />
                                             <span>Properties</span>
+                                        </a>
+                                    </SidebarMenuButton>
+                                </SidebarMenuItem>
+                                <SidebarMenuItem>
+                                    <SidebarMenuButton asChild tooltip="Inbox">
+                                        <a href="/dashboard/inbox">
+                                            <Inbox />
+                                            <span>Inbox</span>
                                         </a>
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>
