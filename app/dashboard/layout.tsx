@@ -7,7 +7,8 @@ import {
     Building2,
     CalendarDays,
     Users,
-    Menu
+    Menu,
+    Inbox
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -53,6 +54,7 @@ export default async function DashboardLayout({
     const navItems = [
         { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
         { name: "Properties", href: "/dashboard/properties", icon: Building2 },
+        { name: "Inbox", href: "/dashboard/inbox", icon: Inbox },
         { name: "Bookings", href: "/dashboard/bookings", icon: CalendarDays },
         { name: "Agents", href: "/dashboard/agents", icon: Users },
     ];
