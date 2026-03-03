@@ -149,7 +149,7 @@ export async function POST(req: Request) {
 
         // MEMORIA (Fase 1 de Frente B): Actualizar Conversations y Messages
         let { data: conversation } = await supabase
-            .from('conversations')
+            .from('whatsapp_conversations')
             .select('id, status')
             .eq('org_id', activeOrgId)
             .eq('lead_phone', senderPhone)
@@ -160,7 +160,7 @@ export async function POST(req: Request) {
         // Si no hay coversacion activa, creamos una
         if (!conversation || conversation.status === 'closed') {
             const { data: newConv, error: convErr } = await supabase
-                .from('conversations')
+                .from('whatsapp_conversations')
                 .insert({
                     org_id: activeOrgId,
                     lead_phone: senderPhone,
@@ -175,7 +175,7 @@ export async function POST(req: Request) {
 
         // Logueamos el mensaje del cliente en la BBDD
         if (conversation) {
-            await supabase.from('messages').insert({
+            await supabase.from('whatsapp_messages').insert({
                 conversation_id: conversation.id,
                 sender_type: 'lead',
                 content: content
