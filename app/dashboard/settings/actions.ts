@@ -1,16 +1,11 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { revalidatePath } from 'next/cache'
 import { requireActiveOrg } from '@/lib/impersonation'
 
 export async function updateAgencySettingsAction(formData: FormData) {
-    const supabase = await createClient()
-
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-    if (authError || !user) {
-        return { error: 'Unauthorized' }
-    }
+    const supabase = await createAdminClient()
 
     let activeContext;
     try {
