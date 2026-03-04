@@ -1,36 +1,29 @@
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { redirect } from 'next/navigation'
 import { SettingsForm } from './settings-form'
+import { requireActiveOrg } from '@/lib/impersonation'
 
 export const metadata = { title: "Settings - KtimatOS" }
 
 export default async function SettingsPage() {
-    const supabase = await createClient()
+    const { activeOrgId, role } = await requireActiveOrg().catch(() => ({ activeOrgId: null, role: null }));
 
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) {
-        redirect('/login')
+    if (!activeOrgId) {
+        redirect('/sign-in')
     }
 
-    const { data: profile } = await supabase
-        .from('profiles')
-        .select('org_id, role')
-        .eq('id', user.id)
-        .single()
-
-    if (!profile) redirect('/login')
+    const supabase = await createAdminClient()
 
     const { data: orgData } = await supabase
         .from('organizations')
         .select('*')
-        .eq('id', profile.org_id)
+        .eq('id', activeOrgId)
         .single()
 
-    if (!orgData) redirect('/login')
+    if (!orgData) redirect('/dashboard')
 
-    // Solo admins y brokers pueden ver/editar los settings de la agencia. 
-    // Agentes normales no deberían acceder a este menú, pero lo deshabilitamos por seguridad en la UI
-    const isAuthorized = ['admin', 'super_admin', 'broker'].includes(profile.role)
+    // Solo admins, brokers y super admins impersonando pueden ver/editar los settings de la agencia. 
+    const isAuthorized = ['admin', 'super_admin', 'super_admin_impersonating', 'broker'].includes(role || '')
 
     return (
         <div className="flex flex-col gap-8 p-4 md:p-8 max-w-3xl mx-auto w-full">
