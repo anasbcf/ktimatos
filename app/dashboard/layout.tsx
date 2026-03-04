@@ -8,7 +8,8 @@ import {
     CalendarDays,
     Users,
     Menu,
-    Inbox
+    Inbox,
+    Settings
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -57,6 +58,7 @@ export default async function DashboardLayout({
         { name: "Inbox", href: "/dashboard/inbox", icon: Inbox },
         { name: "Bookings", href: "/dashboard/bookings", icon: CalendarDays },
         { name: "Agents", href: "/dashboard/agents", icon: Users },
+        { name: "Settings", href: "/dashboard/settings", icon: Settings },
     ];
 
     const impersonationContext = await getImpersonationContextUI();
